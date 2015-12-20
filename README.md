@@ -7,6 +7,7 @@ The LSTAR Grammatical inference algorithm is intented to infer the automata that
 As stated by G. Holzman in its reference book, a MAT is "an Oracle that give answers to membership queries and strong equivalence queries.".
 
 The general idea of the algorithm :
+
 1. create an observation table with the list of input messages accepted by the target.
 2. while the observation table is not closed and complete.
   1. stimulate the target with specifly crafted input requests.
