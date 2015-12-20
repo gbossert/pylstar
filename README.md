@@ -12,12 +12,12 @@ The general idea of the algorithm :
 2. while the observation table is not closed and complete.
   1. stimulate the target with specifly crafted input requests.
   2. store request outputs in the observation table.  
-  3. build an hypothesis automata out of the observation table.
-3. search for a counter-example by comparing the behavior of the hypothesis against the target.
-4. if a counter-example is found.
+3. build an hypothesis automata out of the observation table.
+4. search for a counter-example by comparing the behavior of the hypothesis against the target.
+5. if a counter-example is found.
   1. update the observation table according to the counter-example.
   2. returns to step 2.
-5. if no counter-example was found, the hypothesis is said valid (up to specific probability).
+6. if no counter-example was found, the hypothesis is said valid (up to specific probability).
 
 ## About pylstar
 pylstar is a free and open source Python implementation of the LSTAR Grammatical inference algorithm.
