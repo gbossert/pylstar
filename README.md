@@ -7,16 +7,16 @@ The LSTAR Grammatical inference algorithm is intented to infer the automata that
 As stated by G. Holzman in its reference book, a MAT is "an Oracle that give answers to membership queries and strong equivalence queries.".
 
 The general idea of the algorithm :
-1. create an observation table with the list of input messages accepted by the target
-2. while the observation table is not closed and complete
-  1. stimulate the target with specifly crafted input requests
-  2. store request outputs in the observation table
-3. build an hypothesis automata out of the observation table
-3. search for a counter-example by comparing the behavior of the hypothesis against the target
-4. if a counter-example is found
-  1. update the observation table according to the counter-example
+1. create an observation table with the list of input messages accepted by the target.
+2. while the observation table is not closed and complete.
+  1. stimulate the target with specifly crafted input requests.
+  2. store request outputs in the observation table.  
+  3. build an hypothesis automata out of the observation table.
+3. search for a counter-example by comparing the behavior of the hypothesis against the target.
+4. if a counter-example is found.
+  1. update the observation table according to the counter-example.
   2. returns to step 2.
-5. if no counter-example was found, the hypothesis is said valid (up to specific probability)
+5. if no counter-example was found, the hypothesis is said valid (up to specific probability).
 
 ## About pylstar
 pylstar is a free and open source Python implementation of the LSTAR Grammatical inference algorithm.
@@ -46,7 +46,7 @@ class CoffeeMachineMAT(ActiveKnowledgeBase):
 With your MAT implementation, the following snippet can be used to trigger the automatic inference of the targeted reactive system. This code returns a `pylstar.automata.Automata.Automata` that best describes the behavior of your coffee machine.
 
 ```python
-mat = CofeeMachineMAT()
+mat = CoffeeMachineMAT()
 input_vocabulary = ["REFILL_WATER", 
                     "REFILL_COFFEE", 
                     "PRESS_BUTTON_1", 
