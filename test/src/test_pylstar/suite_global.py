@@ -27,6 +27,8 @@
 import unittest
 import sys
 from common.xmlrunner import XMLTestRunner
+import logging
+logging.basicConfig(level=logging.INFO)
 
 # +----------------------------------------------------------------------------
 # | Local Application Imports

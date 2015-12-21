@@ -784,7 +784,7 @@ class ObservationTable(object):
             #     raise Exception("Word '{}' already exists in observation table with D='{}'".format(word, word_in_D))
             # formulates a new OutputQuery and execute it            
             output_query = OutputQuery(word + word_in_D)
-            self._logger.warn("Execute query : {}".format(output_query))
+            self._logger.debug("Execute query : {}".format(output_query))
             self.__execute_query(output_query)
             if not output_query.is_queried():
                 raise Exception("Query '{}' could not be queried".format(output_query))
@@ -796,7 +796,7 @@ class ObservationTable(object):
                 new_word = Word([input_letter])
             else:
                 new_word = word + Word([input_letter])
-            self._logger.error("Adding word: {}".format(new_word))            
+            self._logger.debug("Adding word: {}".format(new_word))            
             if new_word not in self.S:
                 self.__add_word_in_SA(new_word)
 
@@ -833,7 +833,7 @@ class ObservationTable(object):
                 raise Exception("Word '{}' already exists in observation table with D='{}'".format(word, word_in_D))
             # formulates a new OutputQuery and executes it
             output_query = OutputQuery(word + word_in_D)
-            self._logger.warn("Execute query : {}".format(output_query))            
+            self._logger.debug("Execute query : {}".format(output_query))            
             self.__execute_query(output_query)
             if not output_query.is_queried():
                 raise Exception("Query '{}' could not be queries".format(output_query))
