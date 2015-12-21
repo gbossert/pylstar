@@ -1,5 +1,9 @@
 # pylstar : An implementation of the LSTAR Grammatical Inference Algorithm
 
+[![Build Status](https://travis-ci.org/gbossert/pylstar.svg?branch=master)](https://travis-ci.org/gbossert/pylstar)
+[![Coverage Status](https://coveralls.io/repos/gbossert/pylstar/badge.svg?branch=master&service=github)](https://coveralls.io/github/gbossert/pylstar?branch=master)
+
+
 **Warning : This implementation is only intented for testing purposes : Work in Progress.**
 
 ## About  LSTAR
