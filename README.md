@@ -9,8 +9,8 @@ As stated by G. Holzman in its reference book, a MAT is "an Oracle that give ans
 The general idea of the algorithm :
 
 1. create an observation table with the list of input messages accepted by the target.
-2. while the observation table is not closed and complete.
-  1. stimulate the target with specifly crafted input requests.
+2. while the observation table is not closed and complete do :
+  1. stimulate the target with crafted input requests.
   2. store request outputs in the observation table.  
 3. build an hypothesis automata out of the observation table.
 4. search for a counter-example by comparing the behavior of the hypothesis against the target.
