@@ -40,6 +40,7 @@ from pylstar import ActiveKnowledgeBase
 from pylstar import FakeActiveKnowledgeBase
 from pylstar.automata import Automata
 from pylstar import Letter
+from pylstar.eqtests import RandomWalkMethod
 
 def getSuite():
     # List of modules to include in the list of tests
@@ -53,7 +54,8 @@ def getSuite():
         ActiveKnowledgeBase,
         FakeActiveKnowledgeBase,
         Automata,
-        Letter
+        Letter,
+        RandomWalkMethod
     ]
 
     suite = unittest.TestSuite()

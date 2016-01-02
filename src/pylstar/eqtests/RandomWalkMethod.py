@@ -38,7 +38,157 @@ from pylstar.OutputQuery import OutputQuery
 class RandomWalkMethod(object):
     """This algorithm performs a random walk accross the hypothesis states.
     The output symbols produced while triggering transitions are compared to the ones produced when trigerring
-    the same transitions in the targeted automata"""
+    the same transitions in the targeted automata.
+
+    >>> from pylstar.LSTAR import LSTAR
+    >>> from pylstar.automata.State import State
+    >>> from pylstar.automata.Transition import Transition
+    >>> from pylstar.automata.Automata import Automata
+    >>> from pylstar.Letter import Letter
+    >>> from pylstar.FakeActiveKnowledgeBase import FakeActiveKnowledgeBase
+    >>> from pylstar.eqtests.RandomWalkMethod import RandomWalkMethod
+    >>> symbol_a = "a"
+    >>> symbol_b = "b"
+    >>> symbol_c = "c"
+    >>> symbol_1 = 1
+    >>> symbol_2 = 2
+    >>> symbol_3 = 3
+    >>> l_a = Letter(symbol_a)
+    >>> l_b = Letter(symbol_b)
+    >>> l_c = Letter(symbol_c)
+    >>> l_1 = Letter(symbol_1)
+    >>> l_2 = Letter(symbol_2)
+    >>> l_3 = Letter(symbol_3)
+    >>> s0 = State("S0")
+    >>> s1 = State("S1")
+    >>> s2 = State("S2")
+    >>> t1 = Transition("t1", output_state=s0, input_letter=l_a, output_letter=l_1)
+    >>> t2 = Transition("t2", output_state=s1, input_letter=l_b, output_letter=l_2)
+    >>> t3 = Transition("t3", output_state=s2, input_letter=l_c, output_letter=l_3)
+    >>> s0.transitions = [t1, t2, t3]
+    >>> t4 = Transition("t4", output_state=s1, input_letter=l_a, output_letter=l_2)
+    >>> t5 = Transition("t5", output_state=s1, input_letter=l_b, output_letter=l_3)
+    >>> t6 = Transition("t6", output_state=s0, input_letter=l_c, output_letter=l_1)
+    >>> s1.transitions = [t4, t5, t6]
+    >>> t7 = Transition("t7", output_state=s2, input_letter=l_a, output_letter=l_2)
+    >>> t8 = Transition("t8", output_state=s2, input_letter=l_b, output_letter=l_3)
+    >>> t9 = Transition("t9", output_state=s1, input_letter=l_c, output_letter=l_1)
+    >>> s2.transitions = [t7, t8, t9]
+    >>> automata = Automata(s0)
+    >>> kbase = FakeActiveKnowledgeBase(automata)
+    >>> input_vocabulary = [symbol_a, symbol_b, symbol_c]
+    >>> input_letters = [Letter(s) for s in input_vocabulary]
+    >>> eqTests = RandomWalkMethod(kbase, input_letters, 10000, 0.75)
+    >>> lstar = LSTAR(input_vocabulary, kbase, max_states = 5, eqtests=eqTests)
+    >>> infered_automata = lstar.learn()
+    >>> print infered_automata.build_dot_code()
+    digraph G {
+    "1,2,3,2" [shape=doubleoctagon, style=filled, fillcolor=white, URL="1,2,3,2"];
+    "2,3,1,2" [shape=ellipse, style=filled, fillcolor=white, URL="2,3,1,2"];
+    "2,3,1,1" [shape=ellipse, style=filled, fillcolor=white, URL="2,3,1,1"];
+    "1,2,3,2" -> "1,2,3,2" [fontsize=5, label="I='Letter('a')' / O='Letter(1)'", URL="t0"];
+    "1,2,3,2" -> "2,3,1,1" [fontsize=5, label="I='Letter('b')' / O='Letter(2)'", URL="t1"];
+    "1,2,3,2" -> "2,3,1,2" [fontsize=5, label="I='Letter('c')' / O='Letter(3)'", URL="t2"];
+    "2,3,1,2" -> "2,3,1,2" [fontsize=5, label="I='Letter('a')' / O='Letter(2)'", URL="t6"];
+    "2,3,1,2" -> "2,3,1,2" [fontsize=5, label="I='Letter('b')' / O='Letter(3)'", URL="t7"];
+    "2,3,1,2" -> "2,3,1,1" [fontsize=5, label="I='Letter('c')' / O='Letter(1)'", URL="t8"];
+    "2,3,1,1" -> "2,3,1,1" [fontsize=5, label="I='Letter('a')' / O='Letter(2)'", URL="t3"];
+    "2,3,1,1" -> "2,3,1,1" [fontsize=5, label="I='Letter('b')' / O='Letter(3)'", URL="t4"];
+    "2,3,1,1" -> "1,2,3,2" [fontsize=5, label="I='Letter('c')' / O='Letter(1)'", URL="t5"];
+    }
+
+    
+    >>> from pylstar.LSTAR import LSTAR
+    >>> from pylstar.automata.State import State
+    >>> from pylstar.automata.Transition import Transition
+    >>> from pylstar.automata.Automata import Automata
+    >>> from pylstar.Letter import Letter
+    >>> from pylstar.FakeActiveKnowledgeBase import FakeActiveKnowledgeBase
+    >>> # input symbols
+    >>> symbol_hello = "hello"
+    >>> symbol_bye = "bye"
+    >>> symbol_pass_valid = "pass valid"
+    >>> symbol_pass_invalid = "pass invalid"
+    >>> symbol_cmd1 = "cmd1"
+    >>> symbol_cmd2 = "cmd2"
+    >>> # output symbols
+    >>> symbol_pass_request = "pass?"
+    >>> symbol_ack = "ack"
+    >>> symbol_welcome = "welcome"
+    >>> symbol_error = "error"
+    >>> # create a letter for each symbol
+    >>> l_hello = Letter(symbol_hello)
+    >>> l_bye = Letter(symbol_bye)
+    >>> l_pass_valid = Letter(symbol_pass_valid)
+    >>> l_pass_invalid = Letter("pass invalid")
+    >>> l_cmd1 = Letter(symbol_cmd1)
+    >>> l_cmd2 = Letter(symbol_cmd2)
+    >>> l_welcome = Letter(symbol_welcome)
+    >>> l_ack = Letter(symbol_ack)
+    >>> l_pass_request = Letter(symbol_pass_request)
+    >>> l_error = Letter(symbol_error)
+    >>> # create the infered automata
+    >>> s0 = State("S0")
+    >>> s1 = State("S1")
+    >>> s2 = State("S2")
+    >>> t1 = Transition("t1", output_state=s1, input_letter=l_hello, output_letter=l_pass_request)
+    >>> t2 = Transition("t2", output_state=s0, input_letter=l_bye, output_letter=l_ack)
+    >>> t3 = Transition("t3", output_state=s0, input_letter=l_pass_valid, output_letter=l_error)
+    >>> t4 = Transition("t4", output_state=s0, input_letter=l_pass_invalid, output_letter=l_error)
+    >>> t5 = Transition("t5", output_state=s0, input_letter=l_cmd1, output_letter=l_error)
+    >>> t6 = Transition("t6", output_state=s0, input_letter=l_cmd2, output_letter=l_error)
+    >>> s0.transitions = [t1, t2, t3, t4, t5, t6]
+    >>> t7 = Transition("t7", output_state=s1, input_letter=l_hello, output_letter=l_error)
+    >>> t8 = Transition("t8", output_state=s0, input_letter=l_bye, output_letter=l_ack)
+    >>> t9 = Transition("t9", output_state=s2, input_letter=l_pass_valid, output_letter=l_welcome)
+    >>> t10 = Transition("t10", output_state=s1, input_letter=l_pass_invalid, output_letter=l_error)
+    >>> t11 = Transition("t11", output_state=s1, input_letter=l_cmd1, output_letter=l_error)
+    >>> t12 = Transition("t12", output_state=s1, input_letter=l_cmd2, output_letter=l_error)
+    >>> s1.transitions = [t7, t8, t9, t10, t11, t12]
+    >>> t13 = Transition("t13", output_state=s2, input_letter=l_hello, output_letter=l_error)
+    >>> t14 = Transition("t14", output_state=s0, input_letter=l_bye, output_letter=l_ack)
+    >>> t15 = Transition("t15", output_state=s2, input_letter=l_pass_valid, output_letter=l_error)
+    >>> t16 = Transition("t16", output_state=s2, input_letter=l_pass_invalid, output_letter=l_error)
+    >>> t17 = Transition("t17", output_state=s2, input_letter=l_cmd1, output_letter=l_ack)
+    >>> t18 = Transition("t18", output_state=s2, input_letter=l_cmd2, output_letter=l_ack)
+    >>> s2.transitions = [t13, t14, t15, t16, t17, t18]
+    >>> automata = Automata(s0)
+    >>> kbase = FakeActiveKnowledgeBase(automata)
+    >>> input_vocabulary = [symbol_hello, symbol_bye, symbol_pass_valid, symbol_pass_invalid, symbol_cmd1, symbol_cmd2]
+    >>> input_letters = [Letter(s) for s in input_vocabulary]
+    >>> eqTests = RandomWalkMethod(kbase, input_letters, 10000, 0.75)
+    >>> lstar = LSTAR(input_vocabulary, kbase, max_states = 5, eqtests=eqTests)
+    >>> infered_automata = lstar.learn()
+    >>> print infered_automata.build_dot_code()
+    digraph G {
+    "'pass?','ack','error','error','error','error'" [shape=doubleoctagon, style=filled, fillcolor=white, URL="'pass?','ack','error','error','error','error'"];
+    "'error','ack','welcome','error','error','error'" [shape=ellipse, style=filled, fillcolor=white, URL="'error','ack','welcome','error','error','error'"];
+    "'error','ack','error','error','ack','ack'" [shape=ellipse, style=filled, fillcolor=white, URL="'error','ack','error','error','ack','ack'"];
+    "'pass?','ack','error','error','error','error'" -> "'error','ack','welcome','error','error','error'" [fontsize=5, label="I='Letter('hello')' / O='Letter('pass?')'", URL="t0"];
+    "'pass?','ack','error','error','error','error'" -> "'pass?','ack','error','error','error','error'" [fontsize=5, label="I='Letter('bye')' / O='Letter('ack')'", URL="t1"];
+    "'pass?','ack','error','error','error','error'" -> "'pass?','ack','error','error','error','error'" [fontsize=5, label="I='Letter('pass valid')' / O='Letter('error')'", URL="t2"];
+    "'pass?','ack','error','error','error','error'" -> "'pass?','ack','error','error','error','error'" [fontsize=5, label="I='Letter('pass invalid')' / O='Letter('error')'", URL="t3"];
+    "'pass?','ack','error','error','error','error'" -> "'pass?','ack','error','error','error','error'" [fontsize=5, label="I='Letter('cmd1')' / O='Letter('error')'", URL="t4"];
+    "'pass?','ack','error','error','error','error'" -> "'pass?','ack','error','error','error','error'" [fontsize=5, label="I='Letter('cmd2')' / O='Letter('error')'", URL="t5"];
+    "'error','ack','welcome','error','error','error'" -> "'error','ack','welcome','error','error','error'" [fontsize=5, label="I='Letter('hello')' / O='Letter('error')'", URL="t6"];
+    "'error','ack','welcome','error','error','error'" -> "'pass?','ack','error','error','error','error'" [fontsize=5, label="I='Letter('bye')' / O='Letter('ack')'", URL="t7"];
+    "'error','ack','welcome','error','error','error'" -> "'error','ack','error','error','ack','ack'" [fontsize=5, label="I='Letter('pass valid')' / O='Letter('welcome')'", URL="t8"];
+    "'error','ack','welcome','error','error','error'" -> "'error','ack','welcome','error','error','error'" [fontsize=5, label="I='Letter('pass invalid')' / O='Letter('error')'", URL="t9"];
+    "'error','ack','welcome','error','error','error'" -> "'error','ack','welcome','error','error','error'" [fontsize=5, label="I='Letter('cmd1')' / O='Letter('error')'", URL="t10"];
+    "'error','ack','welcome','error','error','error'" -> "'error','ack','welcome','error','error','error'" [fontsize=5, label="I='Letter('cmd2')' / O='Letter('error')'", URL="t11"];
+    "'error','ack','error','error','ack','ack'" -> "'error','ack','error','error','ack','ack'" [fontsize=5, label="I='Letter('hello')' / O='Letter('error')'", URL="t12"];
+    "'error','ack','error','error','ack','ack'" -> "'pass?','ack','error','error','error','error'" [fontsize=5, label="I='Letter('bye')' / O='Letter('ack')'", URL="t13"];
+    "'error','ack','error','error','ack','ack'" -> "'error','ack','error','error','ack','ack'" [fontsize=5, label="I='Letter('pass valid')' / O='Letter('error')'", URL="t14"];
+    "'error','ack','error','error','ack','ack'" -> "'error','ack','error','error','ack','ack'" [fontsize=5, label="I='Letter('pass invalid')' / O='Letter('error')'", URL="t15"];
+    "'error','ack','error','error','ack','ack'" -> "'error','ack','error','error','ack','ack'" [fontsize=5, label="I='Letter('cmd1')' / O='Letter('ack')'", URL="t16"];
+    "'error','ack','error','error','ack','ack'" -> "'error','ack','error','error','ack','ack'" [fontsize=5, label="I='Letter('cmd2')' / O='Letter('ack')'", URL="t17"];
+    }
+
+
+
+
+
+    """
     
 
     def __init__(self, knowledge_base, input_letters, max_steps, restart_probability):

@@ -25,7 +25,7 @@ The general idea of the algorithm :
 
 ## About pylstar
 pylstar is a free and open source Python implementation of the LSTAR Grammatical inference algorithm.
-It should be noted that this implementation follows the original description of the Angluin's algorithm and relies on *WMethod* to produce the required equivalence queries.
+It should be noted that per default this implementation follows the original description of the Angluin's algorithm and relies on *WMethod* to produce the required equivalence queries. However, a *Random Walk* equivalency test method is also available.
 
 One that wants to use *pylstar* must write a class that exposes the Minimaly Adequate Teacher of the targeted reactive System. This can be done by subclassing `pylstar.ActiveKnowledgeBase.ActiveKnowledgeBase`. For example, the following class could be use to create a MAT out of a coffee machine :
 ```python
