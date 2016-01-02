@@ -31,7 +31,7 @@ import itertools
 # | Pylstar Imports
 # +----------------------------------------------------------------------------
 from pylstar.tools.Decorators import PylstarLogger
-from pylstar.Letter import Letter, EmptyLetter
+from pylstar.Letter import EmptyLetter
 from pylstar.Word import Word
 from pylstar.OutputQuery import OutputQuery
 from pylstar.automata.State import State
@@ -89,6 +89,18 @@ class ObservationTable(object):
         #for letter in self.input_letters:
         #     self.__add_word_in_SA(Word([letter]))
 
+    def serialize(self):
+        """This method returns an str representation of the current state of observation table"""
+        result = []
+
+        result.append(str(self.D))
+        result.append(str(self.S))
+        result.append(str(self.SA))
+        result.append(str(self.ot_content))
+        
+        return '\n\n\n'.join(result)
+        
+
     def find_inconsistency(self):
         """This method returns the inconsistency found in the observation table.
         Returns None if the table is consistent.
@@ -137,19 +149,19 @@ class ObservationTable(object):
         >>> ot.ot_content[w_b][w_ba] = w_0
         >>> ot.ot_content[w_b][w_bb] = w_0
         >>> print ot #doctest: +NORMALIZE_WHITESPACE
-                               | [Letter(a)] | [Letter(b)]
-        ---------------------- | ----------- | -----------
-        [EmptyLetter]          | [Letter(0)] | [Letter(0)]
-        [Letter(a)]            | [Letter(0)] | [Letter(0)]
-        [Letter(b)]            | [Letter(1)] | [Letter(1)]
-        ~~~                    | ~~~         | ~~~
-        [Letter(a), Letter(a)] | [Letter(1)] | [Letter(1)]
-        [Letter(a), Letter(b)] | [Letter(1)] | [Letter(1)]
-        [Letter(b), Letter(a)] | [Letter(0)] | [Letter(0)]
-        [Letter(b), Letter(b)] | [Letter(0)] | [Letter(0)]
-        ---------------------- | ----------- | -----------        
+                                   | [Letter('a')] | [Letter('b')]
+        -------------------------- | ------------- | -------------
+        [EmptyLetter]              | [Letter(0)]   | [Letter(0)]  
+        [Letter('a')]              | [Letter(0)]   | [Letter(0)]  
+        [Letter('b')]              | [Letter(1)]   | [Letter(1)]  
+        ~~~                        | ~~~           | ~~~          
+        [Letter('a'), Letter('a')] | [Letter(1)]   | [Letter(1)]  
+        [Letter('a'), Letter('b')] | [Letter(1)]   | [Letter(1)]  
+        [Letter('b'), Letter('a')] | [Letter(0)]   | [Letter(0)]  
+        [Letter('b'), Letter('b')] | [Letter(0)]   | [Letter(0)]  
+        -------------------------- | ------------- | -------------
         >>> print ot.find_inconsistency()
-        ((([Letter(a)], [EmptyLetter]), Letter(a)), [Letter(a)])
+        ((([Letter('a')], [EmptyLetter]), Letter('a')), [Letter('a')])
         >>> w_aaa = Word([l_a, l_a, l_a])
         >>> w_aab = Word([l_a, l_a, l_b])
         >>> ot.S.append(w_aa)
@@ -162,21 +174,21 @@ class ObservationTable(object):
         >>> ot.ot_content[w_a][w_aab] = w_1 
         >>> ot.ot_content[w_b][w_aab] = w_1               
         >>> print ot #doctest: +NORMALIZE_WHITESPACE
-                                          | [Letter(a)] | [Letter(b)]
-        --------------------------------- | ----------- | -----------
-        [EmptyLetter]                     | [Letter(0)] | [Letter(0)]
-        [Letter(a)]                       | [Letter(0)] | [Letter(0)]
-        [Letter(b)]                       | [Letter(1)] | [Letter(1)]
-        [Letter(a), Letter(a)]            | [Letter(0)] | [Letter(0)]
-        ~~~                               | ~~~         | ~~~
-        [Letter(a), Letter(b)]            | [Letter(1)] | [Letter(1)]
-        [Letter(b), Letter(a)]            | [Letter(0)] | [Letter(0)]
-        [Letter(b), Letter(b)]            | [Letter(0)] | [Letter(0)]
-        [Letter(a), Letter(a), Letter(a)] | [Letter(1)] | [Letter(0)]
-        [Letter(a), Letter(a), Letter(b)] | [Letter(1)] | [Letter(1)]
-        --------------------------------- | ----------- | -----------
+                                                | [Letter('a')] | [Letter('b')]
+        --------------------------------------- | ------------- | -------------
+        [EmptyLetter]                           | [Letter(0)]   | [Letter(0)]  
+        [Letter('a')]                           | [Letter(0)]   | [Letter(0)]  
+        [Letter('b')]                           | [Letter(1)]   | [Letter(1)]  
+        [Letter('a'), Letter('a')]              | [Letter(0)]   | [Letter(0)]  
+        ~~~                                     | ~~~           | ~~~          
+        [Letter('a'), Letter('b')]              | [Letter(1)]   | [Letter(1)]  
+        [Letter('b'), Letter('a')]              | [Letter(0)]   | [Letter(0)]  
+        [Letter('b'), Letter('b')]              | [Letter(0)]   | [Letter(0)]  
+        [Letter('a'), Letter('a'), Letter('a')] | [Letter(1)]   | [Letter(0)]  
+        [Letter('a'), Letter('a'), Letter('b')] | [Letter(1)]   | [Letter(1)]  
+        --------------------------------------- | ------------- | -------------
         >>> print ot.find_inconsistency()
-        ((([Letter(a)], [Letter(a), Letter(a)]), Letter(a)), [Letter(a)])
+        ((([Letter('a')], [Letter('a'), Letter('a')]), Letter('a')), [Letter('a')])
 
 
         """
@@ -264,45 +276,45 @@ class ObservationTable(object):
         >>> ot = ObservationTable(input_letters = [l_a, l_b], knowledge_base = kbase)
         >>> ot.initialize()
         >>> print ot
-                      | [Letter(a)] | [Letter(b)]
-        ------------- | ----------- | -----------
-        [EmptyLetter] | Letter(0)   | Letter(0)  
-        ~~~           | ~~~         | ~~~        
-        [Letter(a)]   | Letter(1)   | Letter(1)  
-        [Letter(b)]   | Letter(1)   | Letter(1)  
-        ------------- | ----------- | -----------
+                      | [Letter('a')] | [Letter('b')]
+        ------------- | ------------- | -------------
+        [EmptyLetter] | Letter(0)     | Letter(0)    
+        ~~~           | ~~~           | ~~~          
+        [Letter('a')] | Letter(1)     | Letter(1)    
+        [Letter('b')] | Letter(1)     | Letter(1)    
+        ------------- | ------------- | -------------
         >>> print ot.is_closed()
         False
         >>> ot.close_table()
         >>> print ot
-                               | [Letter(a)] | [Letter(b)]
-        ---------------------- | ----------- | -----------
-        [EmptyLetter]          | Letter(0)   | Letter(0)  
-        [Letter(a)]            | Letter(1)   | Letter(1)  
-        ~~~                    | ~~~         | ~~~        
-        [Letter(b)]            | Letter(1)   | Letter(1)  
-        [Letter(a), Letter(a)] | Letter(1)   | Letter(1)  
-        [Letter(a), Letter(b)] | Letter(1)   | Letter(1)  
-        ---------------------- | ----------- | -----------
+                                   | [Letter('a')] | [Letter('b')]
+        -------------------------- | ------------- | -------------
+        [EmptyLetter]              | Letter(0)     | Letter(0)    
+        [Letter('a')]              | Letter(1)     | Letter(1)    
+        ~~~                        | ~~~           | ~~~          
+        [Letter('b')]              | Letter(1)     | Letter(1)    
+        [Letter('a'), Letter('a')] | Letter(1)     | Letter(1)    
+        [Letter('a'), Letter('b')] | Letter(1)     | Letter(1)    
+        -------------------------- | ------------- | -------------
         >>> counter_input_word = Word([l_b, l_b, l_b])
         >>> counter_output_word = Word([l_0, l_1, l_0])
         >>> ot.add_counterexample(counter_input_word, counter_output_word)
         >>> print ot
-                                                     | [Letter(a)] | [Letter(b)]
-        -------------------------------------------- | ----------- | -----------
-        [EmptyLetter]                                | Letter(0)   | Letter(0)  
-        [Letter(a)]                                  | Letter(1)   | Letter(1)  
-        [Letter(b)]                                  | Letter(1)   | Letter(1)  
-        [Letter(b), Letter(b)]                       | Letter(0)   | Letter(0)  
-        [Letter(b), Letter(b), Letter(b)]            | Letter(0)   | Letter(0)  
-        ~~~                                          | ~~~         | ~~~        
-        [Letter(a), Letter(a)]                       | Letter(1)   | Letter(1)  
-        [Letter(a), Letter(b)]                       | Letter(1)   | Letter(1)  
-        [Letter(b), Letter(a)]                       | Letter(0)   | Letter(0)  
-        [Letter(b), Letter(b), Letter(a)]            | Letter(1)   | Letter(1)  
-        [Letter(b), Letter(b), Letter(b), Letter(a)] | Letter(1)   | Letter(1)  
-        [Letter(b), Letter(b), Letter(b), Letter(b)] | Letter(1)   | Letter(1)  
-        -------------------------------------------- | ----------- | -----------
+                                                             | [Letter('a')] | [Letter('b')]
+        ---------------------------------------------------- | ------------- | -------------
+        [EmptyLetter]                                        | Letter(0)     | Letter(0)    
+        [Letter('a')]                                        | Letter(1)     | Letter(1)    
+        [Letter('b')]                                        | Letter(1)     | Letter(1)    
+        [Letter('b'), Letter('b')]                           | Letter(0)     | Letter(0)    
+        [Letter('b'), Letter('b'), Letter('b')]              | Letter(0)     | Letter(0)    
+        ~~~                                                  | ~~~           | ~~~          
+        [Letter('a'), Letter('a')]                           | Letter(1)     | Letter(1)    
+        [Letter('a'), Letter('b')]                           | Letter(1)     | Letter(1)    
+        [Letter('b'), Letter('a')]                           | Letter(0)     | Letter(0)    
+        [Letter('b'), Letter('b'), Letter('a')]              | Letter(1)     | Letter(1)    
+        [Letter('b'), Letter('b'), Letter('b'), Letter('a')] | Letter(1)     | Letter(1)    
+        [Letter('b'), Letter('b'), Letter('b'), Letter('b')] | Letter(1)     | Letter(1)    
+        ---------------------------------------------------- | ------------- | -------------
         
         """
 
@@ -375,65 +387,69 @@ class ObservationTable(object):
         >>> ot = ObservationTable(input_letters = [l_a, l_b], knowledge_base = kbase)
         >>> ot.initialize()
         >>> print ot
-                      | [Letter(a)] | [Letter(b)]
-        ------------- | ----------- | -----------
-        [EmptyLetter] | Letter(0)   | Letter(0)  
-        ~~~           | ~~~         | ~~~        
-        [Letter(a)]   | Letter(1)   | Letter(1)  
-        [Letter(b)]   | Letter(1)   | Letter(1)  
-        ------------- | ----------- | -----------
+                      | [Letter('a')] | [Letter('b')]
+        ------------- | ------------- | -------------
+        [EmptyLetter] | Letter(0)     | Letter(0)    
+        ~~~           | ~~~           | ~~~          
+        [Letter('a')] | Letter(1)     | Letter(1)    
+        [Letter('b')] | Letter(1)     | Letter(1)    
+        ------------- | ------------- | -------------
         >>> print ot.is_closed()
         False
         >>> ot.close_table()
         >>> print ot
-                               | [Letter(a)] | [Letter(b)]
-        ---------------------- | ----------- | -----------
-        [EmptyLetter]          | Letter(0)   | Letter(0)  
-        [Letter(a)]            | Letter(1)   | Letter(1)  
-        ~~~                    | ~~~         | ~~~        
-        [Letter(b)]            | Letter(1)   | Letter(1)  
-        [Letter(a), Letter(a)] | Letter(1)   | Letter(1)  
-        [Letter(a), Letter(b)] | Letter(1)   | Letter(1)  
-        ---------------------- | ----------- | -----------
+                                   | [Letter('a')] | [Letter('b')]
+        -------------------------- | ------------- | -------------
+        [EmptyLetter]              | Letter(0)     | Letter(0)    
+        [Letter('a')]              | Letter(1)     | Letter(1)    
+        ~~~                        | ~~~           | ~~~          
+        [Letter('b')]              | Letter(1)     | Letter(1)    
+        [Letter('a'), Letter('a')] | Letter(1)     | Letter(1)    
+        [Letter('a'), Letter('b')] | Letter(1)     | Letter(1)    
+        -------------------------- | ------------- | -------------
         >>> counter_input_word = Word([l_b, l_b, l_b])
         >>> counter_output_word = Word([l_0, l_1, l_0])
         >>> ot.add_counterexample(counter_input_word, counter_output_word)
         >>> print ot
-                                                     | [Letter(a)] | [Letter(b)]
-        -------------------------------------------- | ----------- | -----------
-        [EmptyLetter]                                | Letter(0)   | Letter(0)  
-        [Letter(a)]                                  | Letter(1)   | Letter(1)  
-        [Letter(b)]                                  | Letter(1)   | Letter(1)  
-        [Letter(b), Letter(b)]                       | Letter(0)   | Letter(0)  
-        [Letter(b), Letter(b), Letter(b)]            | Letter(0)   | Letter(0)  
-        ~~~                                          | ~~~         | ~~~        
-        [Letter(a), Letter(a)]                       | Letter(1)   | Letter(1)  
-        [Letter(a), Letter(b)]                       | Letter(1)   | Letter(1)  
-        [Letter(b), Letter(a)]                       | Letter(0)   | Letter(0)  
-        [Letter(b), Letter(b), Letter(a)]            | Letter(1)   | Letter(1)  
-        [Letter(b), Letter(b), Letter(b), Letter(a)] | Letter(1)   | Letter(1)  
-        [Letter(b), Letter(b), Letter(b), Letter(b)] | Letter(1)   | Letter(1)  
-        -------------------------------------------- | ----------- | -----------
+                                                             | [Letter('a')] | [Letter('b')]
+        ---------------------------------------------------- | ------------- | -------------
+        [EmptyLetter]                                        | Letter(0)     | Letter(0)    
+        [Letter('a')]                                        | Letter(1)     | Letter(1)    
+        [Letter('b')]                                        | Letter(1)     | Letter(1)    
+        [Letter('b'), Letter('b')]                           | Letter(0)     | Letter(0)    
+        [Letter('b'), Letter('b'), Letter('b')]              | Letter(0)     | Letter(0)    
+        ~~~                                                  | ~~~           | ~~~          
+        [Letter('a'), Letter('a')]                           | Letter(1)     | Letter(1)    
+        [Letter('a'), Letter('b')]                           | Letter(1)     | Letter(1)    
+        [Letter('b'), Letter('a')]                           | Letter(0)     | Letter(0)    
+        [Letter('b'), Letter('b'), Letter('a')]              | Letter(1)     | Letter(1)    
+        [Letter('b'), Letter('b'), Letter('b'), Letter('a')] | Letter(1)     | Letter(1)    
+        [Letter('b'), Letter('b'), Letter('b'), Letter('b')] | Letter(1)     | Letter(1)    
+        ---------------------------------------------------- | ------------- | -------------
         >>> inconsistency = ot.find_inconsistency()
         >>> print inconsistency
-        ((([Letter(b), Letter(b)], [Letter(b), Letter(b), Letter(b)]), Letter(b)), [Letter(a)])
+        ((([Letter('b')], [Letter('a')]), Letter('a')), [Letter('a')])
         >>> ot.make_consistent(inconsistency)
         >>> print ot #doctest: +NORMALIZE_WHITESPACE
-                                                     | [Letter(a)] | [Letter(b)] | [Letter(b), Letter(a)]
-        -------------------------------------------- | ----------- | ----------- | ----------------------
-        [EmptyLetter]                                | Letter(0)   | Letter(0)   | Letter(1)
-        [Letter(a)]                                  | Letter(1)   | Letter(1)   | Letter(1)
-        [Letter(b)]                                  | Letter(1)   | Letter(1)   | Letter(0)
-        [Letter(b), Letter(b)]                       | Letter(0)   | Letter(0)   | Letter(0)
-        [Letter(b), Letter(b), Letter(b)]            | Letter(0)   | Letter(0)   | Letter(1)
-        ~~~                                          | ~~~         | ~~~         | ~~~
-        [Letter(a), Letter(a)]                       | Letter(1)   | Letter(1)   | Letter(1)
-        [Letter(a), Letter(b)]                       | Letter(1)   | Letter(1)   | Letter(1)
-        [Letter(b), Letter(a)]                       | Letter(0)   | Letter(0)   | Letter(1)
-        [Letter(b), Letter(b), Letter(a)]            | Letter(1)   | Letter(1)   | Letter(1)
-        [Letter(b), Letter(b), Letter(b), Letter(a)] | Letter(1)   | Letter(1)   | Letter(1)
-        [Letter(b), Letter(b), Letter(b), Letter(b)] | Letter(1)   | Letter(1)   | Letter(0)
-        -------------------------------------------- | ----------- | ----------- | ----------------------
+                                                             | [Letter('a')] | [Letter('b')] | [Letter('a'), Letter('a')]
+        ---------------------------------------------------- | ------------- | ------------- | --------------------------
+        [EmptyLetter]                                        | Letter(0)     | Letter(0)     | Letter(1)                 
+        [Letter('a')]                                        | Letter(1)     | Letter(1)     | Letter(1)                 
+        [Letter('b')]                                        | Letter(1)     | Letter(1)     | Letter(0)                 
+        [Letter('b'), Letter('b')]                           | Letter(0)     | Letter(0)     | Letter(1)                 
+        [Letter('b'), Letter('b'), Letter('b')]              | Letter(0)     | Letter(0)     | Letter(1)                 
+        ~~~                                                  | ~~~           | ~~~           | ~~~                       
+        [Letter('a'), Letter('a')]                           | Letter(1)     | Letter(1)     | Letter(1)                 
+        [Letter('a'), Letter('b')]                           | Letter(1)     | Letter(1)     | Letter(1)                 
+        [Letter('b'), Letter('a')]                           | Letter(0)     | Letter(0)     | Letter(1)                 
+        [Letter('b'), Letter('b'), Letter('a')]              | Letter(1)     | Letter(1)     | Letter(1)                 
+        [Letter('b'), Letter('b'), Letter('b'), Letter('a')] | Letter(1)     | Letter(1)     | Letter(1)                 
+        [Letter('b'), Letter('b'), Letter('b'), Letter('b')] | Letter(1)     | Letter(1)     | Letter(0)                 
+        ---------------------------------------------------- | ------------- | ------------- | --------------------------
+        >>> inconsistency = ot.find_inconsistency()
+        >>> print inconsistency
+        ((([Letter('b'), Letter('b')], [Letter('b'), Letter('b'), Letter('b')]), Letter('b')), [Letter('a')])
+        >>> ot.make_consistent(inconsistency)
         >>> print ot.find_inconsistency()
         None
         >>> print ot.is_closed()
@@ -441,19 +457,20 @@ class ObservationTable(object):
         >>> automata = ot.build_hypothesis()
         >>> print automata.build_dot_code()
         digraph G {
-        "0,0,1" [shape=doubleoctagon, style=filled, fillcolor=white, URL="0,0,1"];
-        "1,1,0" [shape=ellipse, style=filled, fillcolor=white, URL="1,1,0"];
-        "0,0,0" [shape=ellipse, style=filled, fillcolor=white, URL="0,0,0"];
-        "1,1,1" [shape=ellipse, style=filled, fillcolor=white, URL="1,1,1"];
-        "0,0,1" -> "1,1,1" [fontsize=5, label="I=\'Letter(a)\' / O=\'Letter(0)\'", URL="t2"];
-        "0,0,1" -> "1,1,0" [fontsize=5, label="I=\'Letter(b)\' / O=\'Letter(0)\'", URL="t3"];
-        "1,1,0" -> "0,0,1" [fontsize=5, label="I=\'Letter(a)\' / O=\'Letter(1)\'", URL="t4"];
-        "1,1,0" -> "0,0,0" [fontsize=5, label="I=\'Letter(b)\' / O=\'Letter(1)\'", URL="t5"];
-        "0,0,0" -> "1,1,1" [fontsize=5, label="I=\'Letter(a)\' / O=\'Letter(0)\'", URL="t0"];
-        "0,0,0" -> "0,0,1" [fontsize=5, label="I=\'Letter(b)\' / O=\'Letter(0)\'", URL="t1"];
-        "1,1,1" -> "1,1,1" [fontsize=5, label="I=\'Letter(a)\' / O=\'Letter(1)\'", URL="t6"];
-        "1,1,1" -> "1,1,1" [fontsize=5, label="I=\'Letter(b)\' / O=\'Letter(1)\'", URL="t7"];
+        "0,0,1,1" [shape=doubleoctagon, style=filled, fillcolor=white, URL="0,0,1,1"];
+        "1,1,0,0" [shape=ellipse, style=filled, fillcolor=white, URL="1,1,0,0"];
+        "0,0,1,0" [shape=ellipse, style=filled, fillcolor=white, URL="0,0,1,0"];
+        "1,1,1,1" [shape=ellipse, style=filled, fillcolor=white, URL="1,1,1,1"];
+        "0,0,1,1" -> "1,1,1,1" [fontsize=5, label="I='Letter('a')' / O='Letter(0)'", URL="t4"];
+        "0,0,1,1" -> "1,1,0,0" [fontsize=5, label="I='Letter('b')' / O='Letter(0)'", URL="t5"];
+        "1,1,0,0" -> "0,0,1,1" [fontsize=5, label="I='Letter('a')' / O='Letter(1)'", URL="t0"];
+        "1,1,0,0" -> "0,0,1,0" [fontsize=5, label="I='Letter('b')' / O='Letter(1)'", URL="t1"];
+        "0,0,1,0" -> "1,1,1,1" [fontsize=5, label="I='Letter('a')' / O='Letter(0)'", URL="t2"];
+        "0,0,1,0" -> "0,0,1,1" [fontsize=5, label="I='Letter('b')' / O='Letter(0)'", URL="t3"];
+        "1,1,1,1" -> "1,1,1,1" [fontsize=5, label="I='Letter('a')' / O='Letter(1)'", URL="t6"];
+        "1,1,1,1" -> "1,1,1,1" [fontsize=5, label="I='Letter('b')' / O='Letter(1)'", URL="t7"];
         }
+
 
         """
 
@@ -507,15 +524,15 @@ class ObservationTable(object):
         >>> ot.ot_content[w_a][w_aa] = w_1
         >>> ot.ot_content[w_a][w_ab] = w_1
         >>> print ot
-                               | [EmptyLetter] | [Letter(a)]
-        ---------------------- | ------------- | -----------
-        [EmptyLetter]          | [Letter(0)]   | [Letter(1)]
-        [Letter(a)]            | [Letter(1)]   | [Letter(0)]
-        ~~~                    | ~~~           | ~~~        
-        [Letter(b)]            | [Letter(1)]   | [Letter(0)]
-        [Letter(a), Letter(a)] | [Letter(0)]   | [Letter(1)]
-        [Letter(a), Letter(b)] | [Letter(1)]   | [Letter(1)]
-        ---------------------- | ------------- | -----------
+                                   | [EmptyLetter] | [Letter('a')]
+        -------------------------- | ------------- | -------------
+        [EmptyLetter]              | [Letter(0)]   | [Letter(1)]  
+        [Letter('a')]              | [Letter(1)]   | [Letter(0)]  
+        ~~~                        | ~~~           | ~~~          
+        [Letter('b')]              | [Letter(1)]   | [Letter(0)]  
+        [Letter('a'), Letter('a')] | [Letter(0)]   | [Letter(1)]  
+        [Letter('a'), Letter('b')] | [Letter(1)]   | [Letter(1)]  
+        -------------------------- | ------------- | -------------
         >>> ot.is_closed()
         False
         >>> ot.S.append(w_ab)
@@ -528,17 +545,17 @@ class ObservationTable(object):
         >>> ot.ot_content[w_a][w_aba] = w_1
         >>> ot.ot_content[w_a][w_abb] = w_0
         >>> print ot
-                                          | [EmptyLetter] | [Letter(a)]
-        --------------------------------- | ------------- | -----------
-        [EmptyLetter]                     | [Letter(0)]   | [Letter(1)]
-        [Letter(a)]                       | [Letter(1)]   | [Letter(0)]
-        [Letter(a), Letter(b)]            | [Letter(1)]   | [Letter(1)]
-        ~~~                               | ~~~           | ~~~        
-        [Letter(b)]                       | [Letter(1)]   | [Letter(0)]
-        [Letter(a), Letter(a)]            | [Letter(0)]   | [Letter(1)]
-        [Letter(a), Letter(b), Letter(a)] | [Letter(0)]   | [Letter(1)]
-        [Letter(a), Letter(b), Letter(b)] | [Letter(1)]   | [Letter(0)]
-        --------------------------------- | ------------- | -----------
+                                                | [EmptyLetter] | [Letter('a')]
+        --------------------------------------- | ------------- | -------------
+        [EmptyLetter]                           | [Letter(0)]   | [Letter(1)]  
+        [Letter('a')]                           | [Letter(1)]   | [Letter(0)]  
+        [Letter('a'), Letter('b')]              | [Letter(1)]   | [Letter(1)]  
+        ~~~                                     | ~~~           | ~~~          
+        [Letter('b')]                           | [Letter(1)]   | [Letter(0)]  
+        [Letter('a'), Letter('a')]              | [Letter(0)]   | [Letter(1)]  
+        [Letter('a'), Letter('b'), Letter('a')] | [Letter(0)]   | [Letter(1)]  
+        [Letter('a'), Letter('b'), Letter('b')] | [Letter(1)]   | [Letter(0)]  
+        --------------------------------------- | ------------- | -------------
         >>> ot.is_closed()
         True
         
@@ -588,26 +605,27 @@ class ObservationTable(object):
         >>> ot = ObservationTable(input_letters = [l_a, l_b], knowledge_base = kbase)
         >>> ot.initialize()
         >>> print ot
-                      | [Letter(a)] | [Letter(b)]
-        ------------- | ----------- | -----------
-        [EmptyLetter] | Letter(1)   | Letter(2)  
-        ~~~           | ~~~         | ~~~        
-        [Letter(a)]   | Letter(1)   | Letter(2)  
-        [Letter(b)]   | Letter(1)   | Letter(3)  
-        ------------- | ----------- | -----------
+                      | [Letter('a')] | [Letter('b')]
+        ------------- | ------------- | -------------
+        [EmptyLetter] | Letter(1)     | Letter(2)    
+        ~~~           | ~~~           | ~~~          
+        [Letter('a')] | Letter(1)     | Letter(2)    
+        [Letter('b')] | Letter(1)     | Letter(3)    
+        ------------- | ------------- | -------------
         >>> ot.is_closed()
         False
         >>> ot.close_table()
         >>> print ot
-                               | [Letter(a)] | [Letter(b)]
-        ---------------------- | ----------- | -----------
-        [EmptyLetter]          | Letter(1)   | Letter(2)  
-        [Letter(b)]            | Letter(1)   | Letter(3)  
-        ~~~                    | ~~~         | ~~~        
-        [Letter(a)]            | Letter(1)   | Letter(2)  
-        [Letter(b), Letter(a)] | Letter(1)   | Letter(3)  
-        [Letter(b), Letter(b)] | Letter(1)   | Letter(2)  
-        ---------------------- | ----------- | -----------
+                                   | [Letter('a')] | [Letter('b')]
+        -------------------------- | ------------- | -------------
+        [EmptyLetter]              | Letter(1)     | Letter(2)    
+        [Letter('b')]              | Letter(1)     | Letter(3)    
+        ~~~                        | ~~~           | ~~~          
+        [Letter('a')]              | Letter(1)     | Letter(2)    
+        [Letter('b'), Letter('a')] | Letter(1)     | Letter(3)    
+        [Letter('b'), Letter('b')] | Letter(1)     | Letter(2)    
+        -------------------------- | ------------- | -------------
+
         >>> ot.is_closed()
         True
 
@@ -634,6 +652,8 @@ class ObservationTable(object):
 
         >>> from pylstar.ObservationTable import ObservationTable
         >>> from pylstar.KnowledgeBase import KnowledgeBase
+        >>> from pylstar.Word import Word
+        >>> from pylstar.Letter import Letter
         >>> kbase = KnowledgeBase()
         >>> ot = ObservationTable([], kbase)
         >>> ot.initialize()
@@ -664,13 +684,13 @@ class ObservationTable(object):
         >>> ot.ot_content[w_c][w_aa] = w_1
         >>> ot.ot_content[w_c][w_ba] = w_1
         >>> print ', '.join([str(w) for w in ot._ObservationTable__get_row(w_a)])
-        [Letter(1)], [Letter(2)], [Letter(3)]
+        [Letter('1')], [Letter('2')], [Letter('3')]
         >>> print ', '.join([str(w) for w in ot._ObservationTable__get_row(w_b)])
-        [Letter(1)], [Letter(2)], [Letter(3)]
+        [Letter('1')], [Letter('2')], [Letter('3')]
         >>> print ', '.join([str(w) for w in ot._ObservationTable__get_row(w_aa)])
-        [Letter(3)], [Letter(2)], [Letter(1)]
+        [Letter('3')], [Letter('2')], [Letter('1')]
         >>> print ', '.join([str(w) for w in ot._ObservationTable__get_row(w_ba)])
-        [Letter(3)], [Letter(2)], [Letter(1)]
+        [Letter('3')], [Letter('2')], [Letter('1')]
 
 
 """
@@ -709,6 +729,8 @@ class ObservationTable(object):
 
         >>> from pylstar.ObservationTable import ObservationTable
         >>> from pylstar.KnowledgeBase import KnowledgeBase
+        >>> from pylstar.Word import Word
+        >>> from pylstar.Letter import Letter
         >>> kbase = KnowledgeBase()
         >>> ot = ObservationTable(input_letters = [], knowledge_base = kbase)
         >>> w = Word([Letter("a")])
@@ -716,7 +738,7 @@ class ObservationTable(object):
         >>> ot._ObservationTable__add_word_in_D(w)
         Traceback (most recent call last):
         ...
-        Exception: Word '[Letter(a)]' is already registered in D
+        Exception: Word '[Letter('a')]' is already registered in D
 
         
 
@@ -756,6 +778,8 @@ class ObservationTable(object):
 
         >>> from pylstar.ObservationTable import ObservationTable
         >>> from pylstar.KnowledgeBase import KnowledgeBase
+        >>> from pylstar.Letter import Letter
+        >>> from pylstar.Word import Word
         >>> kbase = KnowledgeBase()
         >>> ot = ObservationTable(input_letters = [], knowledge_base = kbase)
         >>> ot.initialize()
@@ -806,6 +830,8 @@ class ObservationTable(object):
 
         >>> from pylstar.ObservationTable import ObservationTable
         >>> from pylstar.KnowledgeBase import KnowledgeBase
+        >>> from pylstar.Letter import Letter
+        >>> from pylstar.Word import Word
         >>> kbase = KnowledgeBase()
         >>> ot = ObservationTable(input_letters = [], knowledge_base = kbase)
         >>> ot.initialize()
@@ -861,7 +887,7 @@ class ObservationTable(object):
         try:
             self.knowledge_base.resolve_query(query)
         except Exception, e:
-            self._logger.error(e)
+            self._logger.error(e, exc_info=True)
 
     def build_hypothesis(self):
         """This method returns and Automata that follows the observation table.
@@ -915,17 +941,17 @@ class ObservationTable(object):
         >>> ot.ot_content[w_aa][w_aaa] = l_y
         >>> ot.ot_content[w_aa][w_aab] = l_z        
         >>> print ot
-                                          | [Letter(a)] | [Letter(b)] | [Letter(a), Letter(a)]
-        --------------------------------- | ----------- | ----------- | ----------------------
-        [EmptyLetter]                     | Letter(z)   | Letter(z)   | Letter(y)             
-        [Letter(a)]                       | Letter(y)   | Letter(y)   | Letter(z)             
-        [Letter(a), Letter(a)]            | Letter(z)   | Letter(z)   | Letter(z)             
-        ~~~                               | ~~~         | ~~~         | ~~~                   
-        [Letter(b)]                       | Letter(y)   | Letter(y)   | Letter(z)             
-        [Letter(a), Letter(b)]            | Letter(z)   | Letter(z)   | Letter(y)             
-        [Letter(a), Letter(a), Letter(a)] | Letter(z)   | Letter(z)   | Letter(y)             
-        [Letter(a), Letter(a), Letter(b)] | Letter(y)   | Letter(y)   | Letter(z)             
-        --------------------------------- | ----------- | ----------- | ----------------------
+                                                | [Letter('a')] | [Letter('b')] | [Letter('a'), Letter('a')]
+        --------------------------------------- | ------------- | ------------- | --------------------------
+        [EmptyLetter]                           | Letter('z')   | Letter('z')   | Letter('y')               
+        [Letter('a')]                           | Letter('y')   | Letter('y')   | Letter('z')               
+        [Letter('a'), Letter('a')]              | Letter('z')   | Letter('z')   | Letter('z')               
+        ~~~                                     | ~~~           | ~~~           | ~~~                       
+        [Letter('b')]                           | Letter('y')   | Letter('y')   | Letter('z')               
+        [Letter('a'), Letter('b')]              | Letter('z')   | Letter('z')   | Letter('y')               
+        [Letter('a'), Letter('a'), Letter('a')] | Letter('z')   | Letter('z')   | Letter('y')               
+        [Letter('a'), Letter('a'), Letter('b')] | Letter('y')   | Letter('y')   | Letter('z')               
+        --------------------------------------- | ------------- | ------------- | --------------------------
         >>> print ot.is_closed()
         True
         >>> print ot.find_inconsistency()
@@ -933,15 +959,15 @@ class ObservationTable(object):
         >>> automata = ot.build_hypothesis()
         >>> print automata.build_dot_code()
         digraph G {
-        "z,z,y" [shape=doubleoctagon, style=filled, fillcolor=white, URL="z,z,y"];
-        "y,y,z" [shape=ellipse, style=filled, fillcolor=white, URL="y,y,z"];
-        "z,z,z" [shape=ellipse, style=filled, fillcolor=white, URL="z,z,z"];
-        "z,z,y" -> "y,y,z" [fontsize=5, label="I='Letter(a)' / O='Letter(z)'", URL="t4"];
-        "z,z,y" -> "y,y,z" [fontsize=5, label="I='Letter(b)' / O='Letter(z)'", URL="t5"];
-        "y,y,z" -> "z,z,z" [fontsize=5, label="I='Letter(a)' / O='Letter(y)'", URL="t0"];
-        "y,y,z" -> "z,z,y" [fontsize=5, label="I='Letter(b)' / O='Letter(y)'", URL="t1"];
-        "z,z,z" -> "z,z,y" [fontsize=5, label="I='Letter(a)' / O='Letter(z)'", URL="t2"];
-        "z,z,z" -> "y,y,z" [fontsize=5, label="I='Letter(b)' / O='Letter(z)'", URL="t3"];
+        "'z','z','y'" [shape=doubleoctagon, style=filled, fillcolor=white, URL="'z','z','y'"];
+        "'y','y','z'" [shape=ellipse, style=filled, fillcolor=white, URL="'y','y','z'"];
+        "'z','z','z'" [shape=ellipse, style=filled, fillcolor=white, URL="'z','z','z'"];
+        "'z','z','y'" -> "'y','y','z'" [fontsize=5, label="I='Letter('a')' / O='Letter('z')'", URL="t4"];
+        "'z','z','y'" -> "'y','y','z'" [fontsize=5, label="I='Letter('b')' / O='Letter('z')'", URL="t5"];
+        "'y','y','z'" -> "'z','z','z'" [fontsize=5, label="I='Letter('a')' / O='Letter('y')'", URL="t2"];
+        "'y','y','z'" -> "'z','z','y'" [fontsize=5, label="I='Letter('b')' / O='Letter('y')'", URL="t3"];
+        "'z','z','z'" -> "'z','z','y'" [fontsize=5, label="I='Letter('a')' / O='Letter('z')'", URL="t0"];
+        "'z','z','z'" -> "'y','y','z'" [fontsize=5, label="I='Letter('b')' / O='Letter('z')'", URL="t1"];
         }
 
         """

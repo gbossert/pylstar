@@ -42,13 +42,19 @@ class Word(object):
     >>> l2 = Letter("b")
     >>> w1 = Word([l1, l2])
     >>> print w1
-    [Letter(a), Letter(b)]
+    [Letter('a'), Letter('b')]
 
     
     """
 
-    def __init__(self, letters = None):
-        self.letters = letters
+    def __init__(self, letters = None, normalize=True):
+
+        if normalize:
+            self.letters = letters
+        else:
+            self.letters = []
+            for l in letters:
+                self.letters.append(l)
 
     def __hash__(self):
         return hash(repr(self))
@@ -86,7 +92,7 @@ class Word(object):
         >>> w2 = Word([l3, l4])
         >>> w3 = w1 + w2
         >>> print w3
-        [Letter(a), Letter(b), Letter(c), Letter(d)]
+        [Letter('a'), Letter('b'), Letter('c'), Letter('d')]
 
 
         Only two words can be added

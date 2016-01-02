@@ -34,32 +34,79 @@ from pylstar.tools.Decorators import PylstarLogger
 
 @PylstarLogger
 class Letter(object):
+    """
+    A letter is a wrapper for a set of symbols. A word is made of letters.
+    A symbol can be of any type (e.g. str, int, Custom class)
 
-    def __init__(self, symbol = None):
-        self.symbol = symbol
+    >>> from pylstar.Letter import Letter
+    >>> l1 = Letter("l1")
+    >>> print l1
+    Letter('l1')
+    
+    """
+
+    def __init__(self, symbol = None, symbols = None):
+        self.symbols = set()
+        
+        if symbol is not None:
+            self.symbols.add(symbol)
+        if symbols is not None:
+            self.symbols.update(symbols)
+            
 
     def __eq__(self, other):
+        """Two letters are equal iif their symbols are equals
+
+        >>> from pylstar.Letter import Letter
+        >>> la = Letter("a")
+        >>> lb = Letter("b")
+        >>> la == lb
+        False
+        >>> la == "a"
+        False
+        >>> la == Letter("a")
+        True
+        """
         if not isinstance(other, Letter):
             return False
-        return self.symbol == other.symbol
+        return self.symbols == other.symbols
 
     def __ne__(self, other):
-        return self.symbol != other.symbol
+        """Two letters are not equal if their symbols are not equals
+
+        >>> from pylstar.Letter import Letter
+        >>> la = Letter("a")
+        >>> lb = Letter("b")
+        >>> la != lb
+        True
+        >>> la != "a"
+        True
+        >>> la != Letter("a")
+        False
+        """
+
+        if not isinstance(other, Letter):
+            return True
+        return self.symbols != other.symbols
     
     def __str__(self):
-        return "Letter({})".format(self.symbol)
+        str_name = "None"
+        if self.symbols is not None:
+            str_name = ','.join([repr(s) for s in self.symbols])
+        
+        return "Letter({})".format(str_name)
 
     def __repr__(self):
         return self.__str__()
 
     @property
-    def symbol(self):
-        """Symbol that is represented by the letter"""
-        return self.__symbol
+    def symbols(self):
+        """Symbols that are represented by the letter"""
+        return self.__symbols
     
-    @symbol.setter
-    def symbol(self, symbol):    
-        self.__symbol = symbol
+    @symbols.setter
+    def symbols(self, symbols):    
+        self.__symbols = symbols
 
         
 @PylstarLogger

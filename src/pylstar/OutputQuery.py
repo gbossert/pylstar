@@ -66,7 +66,7 @@ class OutputQuery(object):
         >>> output_query.is_queried()
         False
         >>> print output_query
-        OutputQuery(I = [Letter(a)], O = None)
+        OutputQuery(I = [Letter('a')], O = None)
 
         """
         return self.output_word is not None

@@ -61,12 +61,12 @@ class KnowledgeBase(object):
     >>> kbase.add_word(input_word = word6, output_word = word7)
     >>> kbase.resolve_query(query1)
     >>> print query1.output_word
-    [Letter(1), Letter(2)]
+    [Letter('1'), Letter('2')]
     >>> word8 = Word([Letter('a'), Letter('d'), Letter('e')])
     >>> query2 = OutputQuery(word8)
     >>> kbase.resolve_query(query2)
     >>> print query2.output_word
-    [Letter(1), Letter(4), Letter(5)]
+    [Letter('1'), Letter('4'), Letter('5')]
     
 
 
