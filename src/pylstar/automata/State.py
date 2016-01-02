@@ -35,6 +35,16 @@ from pylstar.tools.Decorators import PylstarLogger
 @PylstarLogger
 class State(object):
     """Definition of a state that belongs to an automata
+
+    >>> from pylstar.automata.State import State
+    >>> from pylstar.automata.Transition import Transition
+    >>> s0 = State("s0")
+    >>> s1 = State("s1")
+    >>> print s0
+    s0
+    >>> print s0.transitions
+    []
+
     """
 
     def __init__(self, name):
@@ -48,6 +58,39 @@ class State(object):
         """This method computes which transition can be triggered given the
         specified input_letter. It returns a tupple made of the output letter
         that is attached to the found transition and the state it reaches.
+
+        >>> from pylstar.automata.State import State
+        >>> from pylstar.automata.Transition import Transition
+        >>> from pylstar.Letter import Letter
+        >>> la = Letter('a')
+        >>> l0 = Letter('0')
+        >>> lb = Letter('b')
+        >>> l1 = Letter('1')
+        >>> s0 = State("s0")
+        >>> s1 = State("s1")
+        >>> t0 = Transition("t0", s1, la, l0)
+        >>> t1 = Transition("t1", s0, lb, l1)
+        >>> s0.transitions = [t0, t1]
+        >>> (output_letter, output_state) = s0.visit(la)
+        >>> print output_letter
+        Letter('0')
+        >>> print output_state
+        s1
+        >>> (output_letter, output_state) = s0.visit(lb)
+        >>> print output_letter
+        Letter('1')
+        >>> print output_state
+        s0
+        >>> s0.visit(None)
+        Traceback (most recent call last):
+        ...
+        Exception: input letter cannot be None
+        >>> s0.visit(l0)
+        Traceback (most recent call last):
+        ...
+        Exception: No transition in state 's0' could be found given letter 'Letter('0')' 
+
+
         """
         
         if input_letter is None:
