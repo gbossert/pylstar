@@ -76,8 +76,11 @@ class KnowledgeBase(object):
 
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self):
-        self.knowledge_tree = KnowledgeTree()
+    def __init__(self, cache_file_path = None):
+        self.knowledge_tree = KnowledgeTree(cache_file_path = cache_file_path)
+
+    def load_cache(self, possible_letters):
+        self.knowledge_tree.load_cache(possible_letters)
 
     def __str__(self):
         return str(self.knowledge_tree)

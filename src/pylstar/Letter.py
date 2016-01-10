@@ -90,14 +90,29 @@ class Letter(object):
         return self.symbols != other.symbols
     
     def __str__(self):
+        return "Letter({})".format(self.name)
+
+    @property
+    def name(self):                
         str_name = "None"
         if self.symbols is not None:
             str_name = ','.join([repr(s) for s in self.symbols])
-        
-        return "Letter({})".format(str_name)
+        return str_name
 
     def __repr__(self):
         return self.__str__()
+
+    def serialize(self):
+        return self.name
+
+    @staticmethod
+    def deserialize(str_letter, possible_letters):
+        for possible_letter in possible_letters:
+            if possible_letter.name == str_letter:
+                return possible_letter        
+        raise Exception("Cannot find any letter that fit with '{}'".format(str_letter))
+                
+
 
     @property
     def symbols(self):
