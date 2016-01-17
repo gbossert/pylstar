@@ -69,7 +69,6 @@ class KnowledgeNode(object):
         return node
 
     def traverse(self, input_letters, output_letters = None):
-        self._logger.debug("Traversing children of '{}' with '{}'".format(self, ', '.join([str(l) for l in input_letters])))
 
         if input_letters[0] != self.input_letter:
             raise Exception("Node cannot be traversed with input letter '{}'".format(input_letters[0]))
@@ -172,9 +171,11 @@ class KnowledgeTree(object):
 
         for root in self.roots:
             try:
-                return Word(root.traverse(input_word.letters))
+                w = Word(root.traverse(input_word.letters))
+                self._logger.info("I = {} > O = {}".format(input_word, w))
+                return w
             except Exception, e:
-                self._logger.debug(e)
+                pass
 
         raise Exception("No path found")
 
@@ -280,12 +281,13 @@ class KnowledgeTree(object):
         self._logger.info("Loading cache from '{}'".format(self.__cache_file_path))
 
         json_content = None
-        
+
         with open(self.__cache_file_path, "r") as fd:
             json_content = json.loads(fd.read())
 
         for content in json_content:
-            self.roots.append(KnowledgeNode.deserialize(content, possible_letters))
+            root = KnowledgeNode.deserialize(content, possible_letters)
+            self.roots.append(root)
         
     def __add_letters(self, input_letters, output_letters):
         self._logger.debug("Adding letters '{}' / '{}'".format(', '.join([str(l) for l in input_letters]), ', '.join([str(l) for l in output_letters])))

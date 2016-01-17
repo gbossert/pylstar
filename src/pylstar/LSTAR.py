@@ -327,6 +327,7 @@ class LSTAR(object):
 
         f_consistent = False
         f_closed = False
+        self._logger.info("Building the hypothesis ({} round)".format(i_round))
         while not f_consistent or not f_closed:
         
             if not self.observation_table.is_closed():
