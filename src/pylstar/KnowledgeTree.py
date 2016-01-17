@@ -41,7 +41,7 @@ class KnowledgeNode(object):
     def __init__(self, input_letter, output_letter):
         self.input_letter = input_letter
         self.output_letter = output_letter
-        self.children = []
+        self.children = dict()
 
     def __str__(self, level=0):
         return json.dumps(self.serialize(), sort_keys=True, indent=4, separators=(',', ': '))
@@ -51,7 +51,7 @@ class KnowledgeNode(object):
         node = {
             "input_letter" : self.input_letter.serialize(),
             "output_letter": self.output_letter.serialize(),
-            "children" : [c.serialize() for c in self.children]
+            "children" : [c.serialize() for c in self.children.values()]
         }
         return node
     
@@ -61,10 +61,10 @@ class KnowledgeNode(object):
             raise Exception("dict_data cannot be None")
         input_letter = Letter.deserialize(dict_data['input_letter'], possible_letters)
         output_letter = Letter.deserialize(dict_data['output_letter'], possible_letters)
-
         node = KnowledgeNode(input_letter, output_letter)
         for child in dict_data["children"]:
-            node.children.append(KnowledgeNode.deserialize(child, possible_letters))
+            child_node = KnowledgeNode.deserialize(child, possible_letters)
+            node.children[child_node.input_letter] = child_node
 
         return node
 
@@ -87,22 +87,25 @@ class KnowledgeNode(object):
         if output_letters is not None:
             current_output_letter = output_letters[1]
 
-        for children in self.children:
-            if children.input_letter == current_input_letter:
+
+        if current_input_letter in self.children:
+            child = self.children[current_input_letter]
+            
+            if current_output_letter is not None and child.output_letter != current_output_letter:
+                raise Exception("Incompatible path found, expected '{}' found '{}'".format(child.output_letter.symbols, current_output_letter.symbols))
+
+            if output_letters is None:
                 new_output_letters = None
-                if current_output_letter is not None:
-                    if children.output_letter != current_output_letter:
-                        raise Exception("Incompatible path found, expected '{}' found '{}".format(children.output_letter.symbols, current_output_letter.symbols))
-                    new_output_letters = output_letters[1:]
+            else:
+                new_output_letters = output_letters[1:]
+                
+            new_input_letters = input_letters[1:]            
 
-                new_input_letters = input_letters[1:]
-
-                return [self.output_letter] + children.traverse(new_input_letters, output_letters = new_output_letters)
-
-        if output_letters is not None:
+            return [self.output_letter] + child.traverse(new_input_letters, output_letters = new_output_letters)
+        
+        elif output_letters is not None:
             new_children = KnowledgeNode(input_letter = input_letters[1], output_letter = output_letters[1])
-            self._logger.debug("Creating a '{}' as a child of '{}'".format(new_children, self))
-            self.children.append(new_children)
+            self.children[new_children.input_letter] = new_children
             new_input_letters = input_letters[1:]
             new_output_letters = output_letters[1:]
             return [self.output_letter] + new_children.traverse(new_input_letters, output_letters = new_output_letters)

@@ -52,7 +52,9 @@ class Letter(object):
             self.symbols.add(symbol)
         if symbols is not None:
             self.symbols.update(symbols)
-            
+
+    def __hash__(self):
+        return hash(frozenset(self.symbols))
 
     def __eq__(self, other):
         """Two letters are equal iif their symbols are equals
