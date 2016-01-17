@@ -108,11 +108,27 @@ class Letter(object):
         return self.name
 
     @staticmethod
-    def deserialize(str_letter, possible_letters):
-        for possible_letter in possible_letters:
-            if possible_letter.name == str_letter:
-                return possible_letter        
-        raise Exception("Cannot find any letter that fit with '{}'".format(str_letter))
+    def deserialize(str_letters, possible_letters):
+        letters = []
+        for str_letter in str_letters.split(','):
+            found = False
+            for possible_letter in possible_letters:
+                if possible_letter.name == str_letter:
+                    letters.append(possible_letter)
+                    found = True
+                    break
+            if not found:
+                raise Exception("Cannot find any letter that fit with '{}'".format(str_letter))
+        if len(letters) == 1:
+            return letters[0]
+        else:
+            symbols = []
+            for l in letters:
+                symbols.extend(l.symbols)
+            return Letter(symbols=symbols)
+
+        
+        
                 
 
 
