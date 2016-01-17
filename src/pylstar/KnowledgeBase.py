@@ -82,6 +82,9 @@ class KnowledgeBase(object):
     def load_cache(self, possible_letters):
         self.knowledge_tree.load_cache(possible_letters)
 
+    def write_cache(self):
+        self.knowledge_tree.write_cache()
+
     def __str__(self):
         return str(self.knowledge_tree)
 
