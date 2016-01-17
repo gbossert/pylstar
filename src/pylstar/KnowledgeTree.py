@@ -151,8 +151,9 @@ class KnowledgeTree(object):
     >>> tree.add_word(input_word, output_word)
     >>> print tree.get_output_word(input_word)
     [Letter(1), Letter(2)]
-
-
+    >>> eq_input_word = Word([Letter("a"), Letter("b")])
+    >>> print tree.get_output_word(eq_input_word)
+    [Letter(1), Letter(2)]
     """
 
     def __init__(self, cache_file_path = None):
