@@ -298,7 +298,7 @@ class KnowledgeTree(object):
         for root in self.roots:
             if root.input_letter == input_letters[0]:
                 if root.output_letter != output_letters[0]:
-                    raise Exception("Incompatible path found, expected '{}' found '{}".format(root.output_letter, output_letters[0]))
+                    raise Exception("Incompatible path found, expected '{}' found '{}'".format(root.output_letter, output_letters[0]))
                 retained_root = root
                 break
 
