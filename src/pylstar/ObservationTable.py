@@ -1018,6 +1018,9 @@ class ObservationTable(object):
 
                 output_state_name = ','.join([str(w) for w in row_new_word])
                 if output_state_name not in long_state_name_to_states.keys():
+                    for x in long_state_name_to_states.keys():
+                        self._logger.debug(x)
+                
                     raise Exception("Cannot find a state with following name : '{}'".format(output_state_name))
 
                 output_state = long_state_name_to_states[output_state_name]

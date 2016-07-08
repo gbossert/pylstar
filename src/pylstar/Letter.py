@@ -31,7 +31,6 @@
 # +----------------------------------------------------------------------------
 from pylstar.tools.Decorators import PylstarLogger
 
-
 @PylstarLogger
 class Letter(object):
     """
@@ -71,6 +70,7 @@ class Letter(object):
         """
         if not isinstance(other, Letter):
             return False
+        
         return self.symbols == other.symbols
 
     def __ne__(self, other):

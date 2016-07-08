@@ -27,6 +27,7 @@
 import tempfile
 import os
 from datetime import datetime
+import time
 
 # +----------------------------------------------------------------------------
 # | pylstar Imports
@@ -259,7 +260,12 @@ class LSTAR(object):
         self.observation_table = ObservationTable(self.input_letters, self.knowledge_base)
         self.max_states = max_states
         self.eqtests = eqtests
+        self.__f_stop = False
 
+    def stop(self):
+        self._logger.info("Stopping the LSTAR learning process.")
+        self.__f_stop = True
+        
     def learn(self):
         self._logger.info("Starting the LSTAR learning process.")
 
@@ -269,7 +275,7 @@ class LSTAR(object):
         f_hypothesis_is_valid = False
         i_round = 1
         
-        while not f_hypothesis_is_valid:
+        while not f_hypothesis_is_valid and not self.__f_stop:
         
             hypothesis = self.build_hypothesis(i_round)
 
@@ -283,6 +289,8 @@ class LSTAR(object):
                 f_hypothesis_is_valid = True
 
             i_round += 1
+
+        self.__serialize_observation_table(i_round)
 
         self._logger.info("Automata successfully computed")
         return hypothesis
@@ -329,7 +337,7 @@ class LSTAR(object):
         f_closed = False
         self._logger.info("Building the hypothesis ({} round)".format(i_round))
         while not f_consistent or not f_closed:
-        
+
             if not self.observation_table.is_closed():
                 self._logger.info("Observation table is not closed.")
                 self.observation_table.close_table()
