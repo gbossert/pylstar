@@ -25,6 +25,7 @@
 # | Global Imports
 # +----------------------------------------------------------------------------
 import socket
+import time
 
 # +----------------------------------------------------------------------------
 # | Pylstar Imports
@@ -50,36 +51,38 @@ class NetworkActiveKnowledgeBase(ActiveKnowledgeBase):
         pass
 
     def submit_word(self, word):
+
         self._logger.debug("Submiting word '{}' to the network target".format(word))
 
         output_letters = []
         
-        socket = socket.socket()
+        s = socket.socket()
         # Reuse the connection
-        socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        socket.settimeout(self.timeout)
-        socket.connect((self.target_host, self.target_remote))
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.settimeout(self.timeout)
+        s.connect((self.target_host, self.target_port))
         try:
-            output_letters = [self._submit_letter(socket, letter) for letter in word.letters]
+            output_letters = [self._submit_letter(s, letter) for letter in word.letters]
         finally:
-            socket.close()
+            s.close()
 
         return Word(letters=output_letters)
             
-    def _submit_letter(self, socket, letter):
+    def _submit_letter(self, s, letter):
         output_letter = EmptyLetter()
         try:
-            to_send = str(letter.symbol)        
-            output_letter = Letter(self._send_and_receive(socket, to_send))
+            to_send = ''.join([symbol for symbol in letter.symbols])
+            output_letter = Letter(self._send_and_receive(s, to_send))
         except Exception, e:
-            self._logger.debug(e)
+            self._logger.error(e)
             
         return output_letter
         
 
-    def _send_and_receive(self, socket, data):
-        socket.sendall(data)
-        return socket.recv(1024)
+    def _send_and_receive(self, s, data):
+        s.sendall(data)
+        time.sleep(0.1)
+        return s.recv(1024).strip()
 
         
         
