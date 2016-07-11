@@ -7,8 +7,7 @@
 **Warning : This implementation is only intented for testing purposes : Work in Progress.**
 
 ## About  LSTAR
-The LSTAR Grammatical inference algorithm is intented to infer the automata that describes a targeted determinist reactive systems if a Minimally Adequate Teacher (MAT) exists for it.
-As stated by G. Holzman in its reference book, a MAT is "an Oracle that give answers to membership queries and strong equivalence queries.".
+The LSTAR Grammatical inference algorithm can be use to infer the automata that describes a targeted determinist reactive systems if a Minimally Adequate Teacher (MAT) exists for it. As a remainder, as states by G. Holzman, a MAT is "an Oracle that give answers to membership queries and strong equivalence queries.".
 
 The general idea of the algorithm :
 
