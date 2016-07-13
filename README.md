@@ -7,11 +7,9 @@
 **Warning : This implementation is only intented for testing purposes : Work in Progress.**
 
 ## About  LSTAR
-The LSTAR Grammatical inference algorithm is intented to infer the automata that describes a targeted determinist reactive systems if a Minimally Adequate Teacher (MAT) exists for it.
-As stated by G. Holzman in its reference book, a MAT is "an Oracle that give answers to membership queries and strong equivalence queries.".
+The LSTAR Grammatical inference algorithm can be use to infer the automata that best describes a targeted determinist reactive systems if a Minimally Adequate Teacher (MAT) exists for it. As stated by G. Holzman in its reference book, a MAT is "an Oracle that give answers to membership queries and strong equivalence queries".
 
-The general idea of the algorithm :
-
+**The general idea of the algorithm** :
 1. create an observation table with the list of input messages accepted by the target.
 2. while the observation table is not closed and complete do :
   1. stimulate the target with crafted input requests.
@@ -27,39 +25,67 @@ The general idea of the algorithm :
 pylstar is a free and open source Python implementation of the LSTAR Grammatical inference algorithm.
 It should be noted that per default this implementation follows the original description of the Angluin's algorithm and relies on *WMethod* to produce the required equivalence queries. However, a *Random Walk* equivalency test method is also available.
 
-One that wants to use *pylstar* must write a class that exposes the Minimaly Adequate Teacher of the targeted reactive System. This can be done by subclassing `pylstar.ActiveKnowledgeBase.ActiveKnowledgeBase`. For example, the following class could be use to create a MAT out of a coffee machine :
-```python
-from CoffeeMachineCommandAndControl import CoffeeMachineCommandAndControl
-from pylstar.ActiveKnowledgeBase import ActiveKnowledgeBase
+One that wants to use *pylstar* must write a class that exposes the Minimaly Adequate Teacher of the targeted reactive System. This can be done by subclassing `pylstar.ActiveKnowledgeBase.ActiveKnowledgeBase`. If the targeted process is a network server, one can solely subclass `pylstar.NetworkActiveKnowledgeBase`.
 
-class CoffeeMachineMAT(ActiveKnowledgeBase):
+For example, the following class could be use to create a MAT out of a coffee machine (`coffeemachine.py`) that exposes an API on `localhost:3000` :
+
+```python
+
+import time
+import subprocess
+
+from pylstar.NetworkActiveKnowledgeBase import NetworkActiveKnowledgeBase
+
+class CoffeeMachineKnowledgeBase(NetworkActiveKnowledgeBase):
 
     def __init__(self):
-        super(ActiveKnowledgeBase, self).__init__()        
-        self.coffee_machine = CoffeeMachineCommandAndControl()
-    def start_target(self):
-        self.coffee_machine_start()
-    def stop_target(self):
-        self.coffee_machine.stop()
-    def submit_word(self, word):
-        output_letters = []
-        for input_letter in word.letters:
-            output_letters.append(self.coffee_machine.execute_command(input_letter))
-        return Word(output_letter)
+        super(CoffeeMachineKnowledgeBase, self).__init__("localhost", 3000)
+        self.__sp = None
+
+    def start(self):
+    """This methods starts the coffee machine (to be triggered before the learning process)."""
+        self.__sp = subprocess.Popen("/usr/bin/python coffeemachine.py", shell=True)
+        # lets wait 5 seconds for the coffee machine to start
+        time.sleep(5)
+        
+    def stop(self):
+    """This method stops the coffee machine (to be triggered after the learning process)."""
+        if self.__sp is not None:
+            self.__sp.kill()
 ```
 
-With your MAT implementation, the following snippet can be used to trigger the automatic inference of the targeted reactive system. This code returns a `pylstar.automata.Automata.Automata` that best describes the behavior of your coffee machine.
+With your MAT implementation, the following snippet can be used to trigger the automatic inference of the coffee machine. This code returns a `pylstar.automata.Automata.Automata` (and prints its DOT code) that best describes the behavior of your coffee machine.
 
 ```python
-mat = CoffeeMachineMAT()
-input_vocabulary = ["REFILL_WATER", 
-                    "REFILL_COFFEE", 
-                    "PRESS_BUTTON_1", 
-                    "PRESS_BUTTION_2", 
-                    "PRESS_BUTTON_3"]
-lstar = LSTAR(input_vocabulary, mat, max_states = 15)
-coffee_machine_automata = lstar.learn()
+from pylstar.LSTAR import LSTAR
+from CoffeeMachineKnowledgeBase import CoffeeMachineKnowledgeBase
+
+# list of messages accepted by the coffee machine
+input_vocabulary = [
+    "REFILL_WATER",
+    "REFILL_COFFEE",
+    "PRESS_BUTTON_A",
+    "PRESS_BUTTON_B",
+    "PRESS_BUTTON_C"    
+]
+# instanciates our CoffeeMachine MAT
+coffeeBase = CoffeeMachineKnowledgeBase()
+try:
+    # starts the coffee machine
+    coffeeBase.start()
+    # learns its grammar
+    lstar = LSTAR(input_vocabulary, coffeeBase, max_states = 10)
+    # stores the coffee machine state machine
+    coffee_state_machine = lstar.learn()
+
+    # displays the DOT code of the state machine
+    print(coffee_state_machine.build_dot_code())
+finally:
+   coffeeBase.stop()
+
 ```
+
+A runnable example of the coffee machine inference is available in `test/src/test_pylstar/coffee_machine_example`.
 
 ## Installation
 
