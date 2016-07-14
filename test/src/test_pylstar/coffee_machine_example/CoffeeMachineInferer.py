@@ -70,6 +70,7 @@ def main():
         fd.write(dot_code)
 
     print("==> Coffee machine {} Automata dumped in {}".format(id_coffee_machine, output_file))
+    print("Knowledge base stats: {}".format(coffeeBase.stats))
 
 
 if __name__ == "__main__":

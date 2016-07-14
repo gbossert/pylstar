@@ -31,6 +31,7 @@ import abc
 # +----------------------------------------------------------------------------
 from pylstar.tools.Decorators import PylstarLogger
 from pylstar.KnowledgeTree import KnowledgeTree
+from pylstar.KnowledgeBaseStats import KnowledgeBaseStats
 
 
 @PylstarLogger
@@ -78,6 +79,7 @@ class KnowledgeBase(object):
 
     def __init__(self, cache_file_path = None):
         self.knowledge_tree = KnowledgeTree(cache_file_path = cache_file_path)
+        self.stats = KnowledgeBaseStats()
 
     def load_cache(self, possible_letters):
         self.knowledge_tree.load_cache(possible_letters)
@@ -97,7 +99,7 @@ class KnowledgeBase(object):
         """
         if query is None:
             raise Exception("Query cannot be None")
-        
+
         query.output_word = self._resolve_word(query.input_word)
 
     def _resolve_word(self, word):
@@ -105,10 +107,18 @@ class KnowledgeBase(object):
             raise Exception("Word cannot be None")
 
         try:
+            self.stats.nb_query += 1
+            self.stats.nb_letter += len(word.letters)
+
             return self.knowledge_tree.get_output_word(word)
         except Exception:        
             self._logger.debug("Knowledge base has no previous knowledge for '{}'".format(word))
+
+            self.stats.nb_submited_query += 1
+            self.stats.nb_submited_letter += len(word.letters)
+
             output = self._execute_word(word)
+            
             if output is not None:
                 self.knowledge_tree.add_word(input_word = word, output_word = output)
             return output
