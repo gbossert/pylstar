@@ -25,6 +25,8 @@ class CoffeeMachineKnowledgeBase(NetworkActiveKnowledgeBase):
     def stop(self):
         print("Stoping coffeemachine")
         if self.__sp is not None:
+            print("Coffee machine process is forced to stop")
+            self.__sp.terminate()            
             self.__sp.kill()
 
 
