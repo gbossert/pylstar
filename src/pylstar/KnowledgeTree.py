@@ -149,10 +149,10 @@ class KnowledgeTree(object):
     ...
     Exception: No path found
     >>> tree.add_word(input_word, output_word)
-    >>> print tree.get_output_word(input_word)
+    >>> print(tree.get_output_word(input_word))
     [Letter(1), Letter(2)]
     >>> eq_input_word = Word([Letter("a"), Letter("b")])
-    >>> print tree.get_output_word(eq_input_word)
+    >>> print(tree.get_output_word(eq_input_word))
     [Letter(1), Letter(2)]
     """
 
@@ -175,7 +175,7 @@ class KnowledgeTree(object):
                 w = Word(root.traverse(input_word.letters))
                 self._logger.info("I = {} > O = {}".format(input_word, w))
                 return w
-            except Exception, e:
+            except Exception:
                 pass
 
         raise Exception("No path found")
@@ -249,7 +249,7 @@ class KnowledgeTree(object):
         >>> tree.write_cache()
         >>> tree2 = KnowledgeTree(cache_file_path = cache_file)
         >>> tree2.load_cache(possible_letters = [l_a, l_b, l_c, l_1, l_2, l_3])
-        >>> print tree2.get_output_word(input_word)
+        >>> print(tree2.get_output_word(input_word))
         [Letter(1), Letter(3)]
         
         """
@@ -295,7 +295,7 @@ class KnowledgeTree(object):
         for root in self.roots:
             if root.input_letter == input_letters[0]:
                 if root.output_letter != output_letters[0]:
-                    raise Exception("Incompatible path found, expected '{}' found '{}'".format(root.output_letter, output_letters[0]))
+                    raise Exception("Incompatible path found, expected '{}' found '{}'".format(root.output_letter.symbols, output_letters[0].symbols))
                 retained_root = root
                 break
 

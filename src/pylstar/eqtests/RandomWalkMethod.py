@@ -81,7 +81,7 @@ class RandomWalkMethod(object):
     >>> eqTests = RandomWalkMethod(kbase, input_letters, 10000, 0.75)
     >>> lstar = LSTAR(input_vocabulary, kbase, max_states = 5, eqtests=eqTests)
     >>> infered_automata = lstar.learn()
-    >>> print infered_automata.build_dot_code()
+    >>> print(infered_automata.build_dot_code())
     digraph G {
     "0" [shape=doubleoctagon, style=filled, fillcolor=white, URL="0"];
     "2" [shape=ellipse, style=filled, fillcolor=white, URL="2"];
@@ -159,7 +159,7 @@ class RandomWalkMethod(object):
     >>> eqTests = RandomWalkMethod(kbase, input_letters, 10000, 0.75)
     >>> lstar = LSTAR(input_vocabulary, kbase, max_states = 5, eqtests=eqTests)
     >>> infered_automata = lstar.learn()
-    >>> print infered_automata.build_dot_code()
+    >>> print(infered_automata.build_dot_code())
     digraph G {
     "0" [shape=doubleoctagon, style=filled, fillcolor=white, URL="0"];
     "1" [shape=ellipse, style=filled, fillcolor=white, URL="1"];
@@ -233,7 +233,7 @@ class RandomWalkMethod(object):
                 input_word.letters.append(input_letter)
                 hypothesis_output_word.letters.append(output_letter)
                 
-            except Exception, e:
+            except Exception as e:
                 self._logger.warn(e)
                 force_restart = True
 

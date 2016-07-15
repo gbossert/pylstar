@@ -39,7 +39,7 @@ class Letter(object):
 
     >>> from pylstar.Letter import Letter
     >>> l1 = Letter("l1")
-    >>> print l1
+    >>> print(l1)
     Letter('l1')
     
     """

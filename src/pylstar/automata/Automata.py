@@ -79,11 +79,11 @@ class Automata(object):
         >>> t8 = Transition("T8", s3, l_b, l_1)        
         >>> s3.transitions = [t7, t8]
         >>> automata = Automata(s0)
-        >>> print automata.play_word(Word([l_a, l_a, l_a]))[0]
+        >>> print(automata.play_word(Word([l_a, l_a, l_a]))[0])
         [Letter(0), Letter(1), Letter(1)]
-        >>> print automata.play_word(Word([l_b, l_b, l_b]))[0]
+        >>> print(automata.play_word(Word([l_b, l_b, l_b]))[0])
         [Letter(0), Letter(1), Letter(0)]
-        >>> print automata.play_word(Word([l_b, l_a,  l_b, l_a, l_b]))[0]
+        >>> print(automata.play_word(Word([l_b, l_a,  l_b, l_a, l_b]))[0])
         [Letter(0), Letter(1), Letter(0), Letter(1), Letter(0)]
         
         """

@@ -84,7 +84,7 @@ try:
                 self.handleError(record)
 
     has_colour = True
-except Exception, e:
+except Exception as e:
     has_colour = False
 
 
@@ -97,7 +97,7 @@ def PylstarLogger(klass):
 
     # Verify if a logger already exists
     found = False
-    for k, v in klass.__dict__.iteritems():
+    for k, v in klass.__dict__.items():
         if isinstance(v, logging.Logger):
             found = True
             break

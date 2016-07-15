@@ -64,7 +64,6 @@ def main():
         coffeeBase.stop()
         
     dot_code = coffee_state_machine.build_dot_code()
-    print(dot_code)
 
     output_file = "coffee_machine_{}.dot".format(id_coffee_machine)
 

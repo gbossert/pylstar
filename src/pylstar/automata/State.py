@@ -40,9 +40,9 @@ class State(object):
     >>> from pylstar.automata.Transition import Transition
     >>> s0 = State("s0")
     >>> s1 = State("s1")
-    >>> print s0
+    >>> print(s0)
     s0
-    >>> print s0.transitions
+    >>> print(s0.transitions)
     []
 
     """
@@ -72,14 +72,14 @@ class State(object):
         >>> t1 = Transition("t1", s0, lb, l1)
         >>> s0.transitions = [t0, t1]
         >>> (output_letter, output_state) = s0.visit(la)
-        >>> print output_letter
+        >>> print(output_letter)
         Letter('0')
-        >>> print output_state
+        >>> print(output_state)
         s1
         >>> (output_letter, output_state) = s0.visit(lb)
-        >>> print output_letter
+        >>> print(output_letter)
         Letter('1')
-        >>> print output_state
+        >>> print(output_state)
         s0
         >>> s0.visit(None)
         Traceback (most recent call last):

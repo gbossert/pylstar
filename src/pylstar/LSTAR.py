@@ -82,7 +82,7 @@ class LSTAR(object):
     >>> input_vocabulary = [symbol_a, symbol_b, symbol_c]
     >>> lstar = LSTAR(input_vocabulary, kbase, max_states = 5)
     >>> infered_automata = lstar.learn()
-    >>> print infered_automata.build_dot_code()
+    >>> print(infered_automata.build_dot_code())
     digraph G {
     "0" [shape=doubleoctagon, style=filled, fillcolor=white, URL="0"];
     "2" [shape=ellipse, style=filled, fillcolor=white, URL="2"];
@@ -157,7 +157,7 @@ class LSTAR(object):
     >>> input_vocabulary = [symbol_hello, symbol_bye, symbol_pass_valid, symbol_pass_invalid, symbol_cmd1, symbol_cmd2]
     >>> lstar = LSTAR(input_vocabulary, kbase, max_states = 5)
     >>> infered_automata = lstar.learn()
-    >>> print infered_automata.build_dot_code()
+    >>> print(infered_automata.build_dot_code())
     digraph G {
     "0" [shape=doubleoctagon, style=filled, fillcolor=white, URL="0"];
     "1" [shape=ellipse, style=filled, fillcolor=white, URL="1"];
@@ -221,7 +221,7 @@ class LSTAR(object):
     >>> input_vocabulary = [symbol_a, symbol_b, symbol_c]
     >>> lstar = LSTAR(input_vocabulary, kbase, max_states = 5)
     >>> infered_automata = lstar.learn()
-    >>> print infered_automata.build_dot_code()
+    >>> print(infered_automata.build_dot_code())
     digraph G {
     "0" [shape=doubleoctagon, style=filled, fillcolor=white, URL="0"];
     "2" [shape=ellipse, style=filled, fillcolor=white, URL="2"];
