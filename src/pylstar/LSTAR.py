@@ -262,6 +262,8 @@ class LSTAR(object):
         self.__f_stop = False
 
     def stop(self):
+        """This method can be use to trigger the end of the learning process"""
+        
         self._logger.info("Stopping the LSTAR learning process.")
         self.__f_stop = True
         
