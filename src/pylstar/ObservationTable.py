@@ -457,19 +457,20 @@ class ObservationTable(object):
         >>> automata = ot.build_hypothesis()
         >>> print automata.build_dot_code()
         digraph G {
-        "0,0,1,1" [shape=doubleoctagon, style=filled, fillcolor=white, URL="0,0,1,1"];
-        "1,1,0,0" [shape=ellipse, style=filled, fillcolor=white, URL="1,1,0,0"];
-        "0,0,1,0" [shape=ellipse, style=filled, fillcolor=white, URL="0,0,1,0"];
-        "1,1,1,1" [shape=ellipse, style=filled, fillcolor=white, URL="1,1,1,1"];
-        "0,0,1,1" -> "1,1,1,1" [fontsize=5, label="I='Letter('a')' / O='Letter(0)'", URL="t4"];
-        "0,0,1,1" -> "1,1,0,0" [fontsize=5, label="I='Letter('b')' / O='Letter(0)'", URL="t5"];
-        "1,1,0,0" -> "0,0,1,1" [fontsize=5, label="I='Letter('a')' / O='Letter(1)'", URL="t0"];
-        "1,1,0,0" -> "0,0,1,0" [fontsize=5, label="I='Letter('b')' / O='Letter(1)'", URL="t1"];
-        "0,0,1,0" -> "1,1,1,1" [fontsize=5, label="I='Letter('a')' / O='Letter(0)'", URL="t2"];
-        "0,0,1,0" -> "0,0,1,1" [fontsize=5, label="I='Letter('b')' / O='Letter(0)'", URL="t3"];
-        "1,1,1,1" -> "1,1,1,1" [fontsize=5, label="I='Letter('a')' / O='Letter(1)'", URL="t6"];
-        "1,1,1,1" -> "1,1,1,1" [fontsize=5, label="I='Letter('b')' / O='Letter(1)'", URL="t7"];
+        "0" [shape=doubleoctagon, style=filled, fillcolor=white, URL="0"];
+        "2" [shape=ellipse, style=filled, fillcolor=white, URL="2"];
+        "3" [shape=ellipse, style=filled, fillcolor=white, URL="3"];
+        "1" [shape=ellipse, style=filled, fillcolor=white, URL="1"];
+        "0" -> "1" [fontsize=5, label="a / 0", URL="t0"];
+        "0" -> "2" [fontsize=5, label="b / 0", URL="t1"];
+        "2" -> "0" [fontsize=5, label="a / 1", URL="t4"];
+        "2" -> "3" [fontsize=5, label="b / 1", URL="t5"];
+        "3" -> "1" [fontsize=5, label="a / 0", URL="t6"];
+        "3" -> "0" [fontsize=5, label="b / 0", URL="t7"];
+        "1" -> "1" [fontsize=5, label="a / 1", URL="t2"];
+        "1" -> "1" [fontsize=5, label="b / 1", URL="t3"];
         }
+                
 
 
         """
@@ -959,17 +960,17 @@ class ObservationTable(object):
         >>> automata = ot.build_hypothesis()
         >>> print automata.build_dot_code()
         digraph G {
-        "'z','z','y'" [shape=doubleoctagon, style=filled, fillcolor=white, URL="'z','z','y'"];
-        "'y','y','z'" [shape=ellipse, style=filled, fillcolor=white, URL="'y','y','z'"];
-        "'z','z','z'" [shape=ellipse, style=filled, fillcolor=white, URL="'z','z','z'"];
-        "'z','z','y'" -> "'y','y','z'" [fontsize=5, label="I='Letter('a')' / O='Letter('z')'", URL="t4"];
-        "'z','z','y'" -> "'y','y','z'" [fontsize=5, label="I='Letter('b')' / O='Letter('z')'", URL="t5"];
-        "'y','y','z'" -> "'z','z','z'" [fontsize=5, label="I='Letter('a')' / O='Letter('y')'", URL="t2"];
-        "'y','y','z'" -> "'z','z','y'" [fontsize=5, label="I='Letter('b')' / O='Letter('y')'", URL="t3"];
-        "'z','z','z'" -> "'z','z','y'" [fontsize=5, label="I='Letter('a')' / O='Letter('z')'", URL="t0"];
-        "'z','z','z'" -> "'y','y','z'" [fontsize=5, label="I='Letter('b')' / O='Letter('z')'", URL="t1"];
+        "0" [shape=doubleoctagon, style=filled, fillcolor=white, URL="0"];
+        "1" [shape=ellipse, style=filled, fillcolor=white, URL="1"];
+        "2" [shape=ellipse, style=filled, fillcolor=white, URL="2"];
+        "0" -> "1" [fontsize=5, label="a / z", URL="t0"];
+        "0" -> "1" [fontsize=5, label="b / z", URL="t1"];
+        "1" -> "2" [fontsize=5, label="a / y", URL="t2"];
+        "1" -> "0" [fontsize=5, label="b / y", URL="t3"];
+        "2" -> "0" [fontsize=5, label="a / z", URL="t4"];
+        "2" -> "1" [fontsize=5, label="b / z", URL="t5"];
         }
-
+        
         """
 
         states = []
@@ -979,16 +980,19 @@ class ObservationTable(object):
         long_state_name_to_states = dict()        
         
         # find all rows in S
-        rows_in_S = {s: self.__get_row(s) for s in self.S}
+        rows_in_S = [(s, self.__get_row(s)) for s in self.S]
 
         # get all unique rows
-        S_with_same_rows = collections.defaultdict(list)
-        for word_in_s, row_s in rows_in_S.iteritems():
-            S_with_same_rows[','.join([str(w) for w in row_s])].append(word_in_s)        
+        S_with_same_rows = collections.OrderedDict()
+        for word_in_s, row_s in rows_in_S:
+            key = ','.join([str(w) for w in row_s])
+            if key not in S_with_same_rows.keys():
+                S_with_same_rows[key] = list()
+            S_with_same_rows[key].append(word_in_s)        
 
         # build the list of states of the hypothesis (and identify the initial state)
         for long_state_name, words_in_S in S_with_same_rows.iteritems():
-            state_name = ''.join(long_state_name.replace("Letter(", "").replace(')', ''))
+            state_name = str(len(states)) #''.join(long_state_name.replace("Letter(", "").replace(')', ''))
             state = State(name = state_name)
             states.append(state)
 
