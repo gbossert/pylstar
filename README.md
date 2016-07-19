@@ -3,35 +3,17 @@
 [![Build Status](https://travis-ci.org/gbossert/pylstar.svg?branch=master)](https://travis-ci.org/gbossert/pylstar)
 [![Coverage Status](https://coveralls.io/repos/gbossert/pylstar/badge.svg?branch=master&service=github)](https://coveralls.io/github/gbossert/pylstar?branch=master)
 
-
-**Warning : This implementation is only intented for testing purposes : Work in Progress.**
-
-## About  LSTAR
-The LSTAR Grammatical inference algorithm can be use to infer the automata that best describes a targeted determinist reactive systems if a Minimally Adequate Teacher (MAT) exists for it. As stated by G. Holzman in its reference book, a MAT is "an Oracle that give answers to membership queries and strong equivalence queries".
-
-**The general idea of the algorithm** :
-
-1. create an observation table with the list of input messages accepted by the target.
-2. while the observation table is not closed and complete do :
-  1. stimulate the target with crafted input requests.
-  2. store request outputs in the observation table.  
-3. build an hypothesis automata out of the observation table.
-4. search for a counter-example by comparing the behavior of the hypothesis against the target.
-5. if a counter-example is found.
-  1. update the observation table according to the counter-example.
-  2. returns to step 2.
-6. if no counter-example was found, the hypothesis is said valid (up to specific probability).
-
 ## About pylstar
-pylstar is a free and open source Python implementation of the LSTAR Grammatical inference algorithm.
-It should be noted that per default this implementation follows the original description of the Angluin's algorithm and relies on *WMethod* to produce the required equivalence queries. However, a *Random Walk* equivalency test method is also available.
+pylstar is a free and open source Python implementation of the *LSTAR* Grammatical inference algorithm. It can be use to automaticaly infer the state machine that best describe the internal of a deterministic black box. To achieve this, pylstar observes the behavior of the target when stimulated with sequence of messages.
 
-One that wants to use *pylstar* must write a class that exposes the Minimaly Adequate Teacher of the targeted reactive System. This can be done by subclassing `pylstar.ActiveKnowledgeBase.ActiveKnowledgeBase`. If the targeted process is a network server, one can solely subclass `pylstar.NetworkActiveKnowledgeBase`.
+It has succesfully been used to infer various protocols such as Botnet protocols, Smart Cards protocols, Cryptographic protocols and Web Servers.
 
-For example, the following class could be use to create a MAT out of a coffee machine (`coffeemachine.py`) that exposes an API on `localhost:3000` :
+## Sample usage
+One that wants to use *pylstar* must write a class that communicates with the targeted black box (*i.e.* it exposes the Minimaly Adequate Teacher of the targeted reactive System). This can be done by subclassing `pylstar.ActiveKnowledgeBase.ActiveKnowledgeBase`. If the targeted process is a network server, one can solely subclass `pylstar.NetworkActiveKnowledgeBase`.
+
+For example, the following class can be use to start and stop a fake coffee machine (`coffeemachine.py`) through it API (`localhost:3000`). This class inherits from `pylstar.NetworkActiveKnowledgeBase` which exposes methods that can send (and read) network messages to (and by) the coffee machine API.
 
 ```python
-
 import time
 import subprocess
 
@@ -55,7 +37,7 @@ class CoffeeMachineKnowledgeBase(NetworkActiveKnowledgeBase):
             self.__sp.kill()
 ```
 
-With your MAT implementation, the following snippet can be used to trigger the automatic inference of the coffee machine. This code returns a `pylstar.automata.Automata.Automata` (and prints its DOT code) that best describes the behavior of your coffee machine.
+Given this wrapper, the following snippet can be used to trigger the automatic inference of the coffee machine. This code declares the messages accepted by the API, an instance of our wrapper and returns a `pylstar.automata.Automata.Automata` (and prints its DOT code) that best describes the behavior of the coffee machine.
 
 ```python
 from pylstar.LSTAR import LSTAR
@@ -83,19 +65,79 @@ try:
     print(coffee_state_machine.build_dot_code())
 finally:
    coffeeBase.stop()
-
 ```
+The execution of this sample returns the state machine illustrated below:
+
+![State Machine of the CoffeeMachine Implementation](https://rawgithub.com/gbossert/pylstar/next/resources/docs/coffee_machine.svg)
 
 A runnable example of the coffee machine inference is available in `test/src/test_pylstar/coffee_machine_example`.
 
 ## Installation
 
-Pylstar is a typical python library. It relies on a `setup.py` file to describe its installation process:
+Pylstar is a typical python library. It relies on a `setup.py` file to describe its installation process.The following command can be use to install pylstar on your system:
 ```bash
 # python setup.py install 
 ```
 
-## Testing and documentations
+## Main Features
+
+### Playing with Automata
+
+The implementation of automata in pylstar follows the definition of [Mealy Machines](https://en.wikipedia.org/wiki/Mealy_machine). An automaton is made of a unique initial state, states and transitions.
+
+#### States
+
+A state (`pylstar.automata.state.State`) is defined by its name (`str`) and some transitions (`list<pylstar.automata.transition.Transition>`). Per default, a state has no transition.
+```python
+from pylstar.automata.State import State
+
+q0 = State(name="Example state")
+q1 = State("Another state")
+```
+
+N.B: Two states are said equivalent if their name equals.
+
+#### Transitions
+
+A transition (`pylstar.automata.transition.Transition`) denotes a directed edge between two states. An edge is attached to a source state and is defined by a triplet:
+* a name (`str`),
+* an input letter (`pylstar.Letter.Letter`),
+* an output letter (`pylstar.Letter.Letter`),
+* a destination state (`pylstar.automata.State.State`).
+ 
+The following snippet defines a transition (`t0`) that can be use to reach "destination state" (`q1`) from "origin state" (`q0`) if input letter "a" (`la`) is received. Executing this transition triggers the emission of letter "0" (`l0`).
+
+```python
+from pylstar.letter import Letter
+from pylstar.automata.State import State
+from pylstar.automata.Transition import Transition
+
+la = Letter("a")
+l0 = Letter("0")
+q0 = State("origin state")
+q1 = State("destination state")
+t0 = Transition("Example Transition", q1, la, l0) 
+q0.transitions.append(t0)
+```
+
+#### Automaton
+
+An automaton (`pylstar.automata.Automata.Automata`) is defined by its initial state (`pylstar.automata.State.State`) and an optional name (`str`). For example, the following snippet illustrates the creation of an automaton:
+
+```python
+from pylstar.automata.Automata import Automata
+from pylstar.automata.State import State
+
+q0 = State(name="Initial State")
+simple_automata = Automata(initial_state = q0, name = "Simple Automata")
+```
+
+An automaton exposes the following methods:
+- *build_dot_code()* - Returns the DOT code (`str`) that represents the automaton.
+- *get_states()* - Returns all the states (`list<pylstar.automata.State.State>`) that can be reached from the initial state of the automaton.
+- *play_word(`pylstar.Word.Word` w, `pylstar.automata.State.State` s = None)* - Visits the automaton according to the specified sequence of input messages `w` starting from state `s` (if None, it starts from the initial state). It returns a tupple made of the produced messages and the states reached while visiting the automaton ( `(pylstar.Word.Word, list<pylstar.automata.State.State>)`).
+
+## Tests
 
 This project uses DocTests for testing and documentation purposes.
 To trigger the tests, please use the following command:
@@ -103,6 +145,7 @@ To trigger the tests, please use the following command:
 ```bash
 $ python setup.py test
 ```
+
 
 ## References
 
