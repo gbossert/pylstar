@@ -83,7 +83,7 @@ class LSTAR(object):
     >>> lstar = LSTAR(input_vocabulary, kbase, max_states = 5)
     >>> infered_automata = lstar.learn()
     >>> print(infered_automata.build_dot_code())
-    digraph G {
+    digraph "Automata" {
     "0" [shape=doubleoctagon, style=filled, fillcolor=white, URL="0"];
     "2" [shape=ellipse, style=filled, fillcolor=white, URL="2"];
     "1" [shape=ellipse, style=filled, fillcolor=white, URL="1"];
@@ -158,7 +158,7 @@ class LSTAR(object):
     >>> lstar = LSTAR(input_vocabulary, kbase, max_states = 5)
     >>> infered_automata = lstar.learn()
     >>> print(infered_automata.build_dot_code())
-    digraph G {
+    digraph "Automata" {
     "0" [shape=doubleoctagon, style=filled, fillcolor=white, URL="0"];
     "1" [shape=ellipse, style=filled, fillcolor=white, URL="1"];
     "2" [shape=ellipse, style=filled, fillcolor=white, URL="2"];
@@ -222,7 +222,7 @@ class LSTAR(object):
     >>> lstar = LSTAR(input_vocabulary, kbase, max_states = 5)
     >>> infered_automata = lstar.learn()
     >>> print(infered_automata.build_dot_code())
-    digraph G {
+    digraph "Automata" {
     "0" [shape=doubleoctagon, style=filled, fillcolor=white, URL="0"];
     "2" [shape=ellipse, style=filled, fillcolor=white, URL="2"];
     "1" [shape=ellipse, style=filled, fillcolor=white, URL="1"];

@@ -31,6 +31,7 @@
 # +----------------------------------------------------------------------------
 from pylstar.tools.Decorators import PylstarLogger
 from pylstar.Word import Word
+from pylstar.automata.State import State
 
 
 @PylstarLogger
@@ -38,8 +39,9 @@ class Automata(object):
     """Definition of an automata
     """
 
-    def __init__(self, initial_state):
+    def __init__(self, initial_state, name = "Automata"):
         self.initial_state = initial_state
+        self.name = name
 
     def play_query(self, query):
         return self.play_word(query.input_word, self.initial_state)
@@ -143,40 +145,93 @@ class Automata(object):
                             toAnalyze.append(outputState)
                     states.append(currentState)
         return states
+
+    @staticmethod
+    def create_from_dot_code(dot_code):
+        """This statis method returns the Automata object that can represents the provided DOT code
+
+        :param dot_code: DOT definition of the Automata to parse
+        :type dot_code: str
+        :rtype: pylstar.automata.Automata.Automata
+        """
+
+        if dot_code is None:
+            raise Exception("Dot code cannot be None")
+
+        if not isinstance(dot_code, str):
+            raise Exception("Dot code must be a String")
+
+        from pylstar.automata.DOTParser import DOTParser
+
+        return DOTParser.parse(dot_code)
+        
         
 
     def build_dot_code(self):
-        """Generates the dot code representing the automata.
+        """Returns the dot code representing the automata.
 
-        :return: a string containing the dot code of the automata.
-        :rtype: a :class:`list`
+        :rtype: str        
+
+        >>> from pylstar.automata.State import State
+        >>> from pylstar.Letter import Letter
+        >>> from pylstar.automata.Transition import Transition
+        >>> la = Letter('A')
+        >>> lb = Letter('B')
+        >>> l0 = Letter(0)
+        >>> l1 = Letter(1)
+        >>> q0 = State("Q0")
+        >>> q1 = State("Q1")
+        >>> t0 = Transition("t0", q0, la, l0)
+        >>> q0.transitions.append(t0)
+        >>> t1 = Transition("t1", q1, lb, l1)
+        >>> q0.transitions.append(t1)
+        >>> t2 = Transition("t2", q1, la, l0)
+        >>> q1.transitions.append(t2)
+        >>> t3 = Transition("t3", q0, lb, l1)
+        >>> q1.transitions.append(t3)
+        >>> automata = Automata(initial_state = q0)
+        >>> print(automata.build_dot_code())
+        digraph "Automata" {
+        "Q0" [shape=doubleoctagon, style=filled, fillcolor=white, URL="Q0"];
+        "Q1" [shape=ellipse, style=filled, fillcolor=white, URL="Q1"];
+        "Q0" -> "Q0" [fontsize=5, label="A / 0", URL="t0"];
+        "Q0" -> "Q1" [fontsize=5, label="B / 1", URL="t1"];
+        "Q1" -> "Q1" [fontsize=5, label="A / 0", URL="t2"];
+        "Q1" -> "Q0" [fontsize=5, label="B / 1", URL="t3"];
+        }
+
+
         """
-        dotCode = []
-        dotCode.append("digraph G {")
+        from pylstar.automata.DOTParser import DOTParser
 
-        # First we include all the states declared in the automata
-        states = self.get_states()
-        for state in states:
-            color = "white"
+        return DOTParser.build_dot_code(self)
 
-            if state == self.initial_state:
-                shape = "doubleoctagon"
-            else:
-                shape = "ellipse"
-
-            dotCode.append('"{0}" [shape={1}, style=filled, fillcolor={2}, URL="{3}"];'.format(state.name, shape, color, state.name))
-
-        for inputState in states:
-            for transition in inputState.transitions:
-                outputState = transition.output_state
-                dotCode.append('"{0}" -> "{1}" [fontsize=5, label="{2}", URL="{3}"];'.format(inputState.name, outputState.name, transition.label, transition.name))
-
-        dotCode.append("}")
-
-        return '\n'.join(dotCode)
         
-        
+    @property
+    def initial_state(self):
+        """The initial state of the Automata"""
+        return self.__initial_state
 
+    @initial_state.setter
+    def initial_state(self, state):
+        if state is None:
+            raise Exception("Initial state cannot be None")
+        if not isinstance(state, State):
+            raise Exception("Initial state must be a state")
+        self.__initial_state = state
+
+    @property
+    def name(self):
+        """The name of the state machine"""
+        return self.__name
+
+    @name.setter
+    def name(self, name):
+        if name is None:
+            raise Exception("Name of the automata cannot be None")
+        if not isinstance(name, str):
+            raise Exception("Name of the automata must be a String")
+        self.__name = name
         
 
     

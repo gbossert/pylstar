@@ -456,7 +456,7 @@ class ObservationTable(object):
         True
         >>> automata = ot.build_hypothesis()
         >>> print(automata.build_dot_code())
-        digraph G {
+        digraph "Automata" {
         "0" [shape=doubleoctagon, style=filled, fillcolor=white, URL="0"];
         "2" [shape=ellipse, style=filled, fillcolor=white, URL="2"];
         "3" [shape=ellipse, style=filled, fillcolor=white, URL="3"];
@@ -959,7 +959,7 @@ class ObservationTable(object):
         None
         >>> automata = ot.build_hypothesis()
         >>> print(automata.build_dot_code())
-        digraph G {
+        digraph "Automata" {
         "0" [shape=doubleoctagon, style=filled, fillcolor=white, URL="0"];
         "1" [shape=ellipse, style=filled, fillcolor=white, URL="1"];
         "2" [shape=ellipse, style=filled, fillcolor=white, URL="2"];
