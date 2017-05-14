@@ -43,7 +43,7 @@ versionName = "Unknown"
 #+---------------------------------------------------------------------------+
 #| Copyright mentions
 #+---------------------------------------------------------------------------+
-copyright = "Copyright (C) 2015 Georges Bossert"
+copyright = "Copyright (C) 2015-2017 Georges Bossert"
 
 #+---------------------------------------------------------------------------+
 #| Description of the application
