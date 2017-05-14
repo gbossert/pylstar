@@ -208,7 +208,7 @@ class KnowledgeTree(object):
         >>> tree.add_word(input_word2, output_word3)
         Traceback (most recent call last):
         ...
-        Exception: Incompatible path found, expected 'set([2])' found 'set([1])'
+        Exception: Incompatible path found, expected '{2}' found '{1}'
 
         """
 
