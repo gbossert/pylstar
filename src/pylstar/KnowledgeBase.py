@@ -31,6 +31,7 @@ import abc
 # +----------------------------------------------------------------------------
 from pylstar.tools.Decorators import PylstarLogger
 from pylstar.KnowledgeTree import KnowledgeTree
+from pylstar.KnowledgeBaseStats import KnowledgeBaseStats
 
 
 @PylstarLogger
@@ -60,12 +61,12 @@ class KnowledgeBase(object):
     >>> word7 = Word([Letter('6'), Letter('7')])
     >>> kbase.add_word(input_word = word6, output_word = word7)
     >>> kbase.resolve_query(query1)
-    >>> print query1.output_word
+    >>> print(query1.output_word)
     [Letter('1'), Letter('2')]
     >>> word8 = Word([Letter('a'), Letter('d'), Letter('e')])
     >>> query2 = OutputQuery(word8)
     >>> kbase.resolve_query(query2)
-    >>> print query2.output_word
+    >>> print(query2.output_word)
     [Letter('1'), Letter('4'), Letter('5')]
     
 
@@ -76,8 +77,15 @@ class KnowledgeBase(object):
 
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self):
-        self.knowledge_tree = KnowledgeTree()
+    def __init__(self, cache_file_path = None):
+        self.knowledge_tree = KnowledgeTree(cache_file_path = cache_file_path)
+        self.stats = KnowledgeBaseStats()
+
+    def load_cache(self, possible_letters):
+        self.knowledge_tree.load_cache(possible_letters)
+
+    def write_cache(self):
+        self.knowledge_tree.write_cache()
 
     def __str__(self):
         return str(self.knowledge_tree)
@@ -91,7 +99,7 @@ class KnowledgeBase(object):
         """
         if query is None:
             raise Exception("Query cannot be None")
-        
+
         query.output_word = self._resolve_word(query.input_word)
 
     def _resolve_word(self, word):
@@ -99,10 +107,18 @@ class KnowledgeBase(object):
             raise Exception("Word cannot be None")
 
         try:
+            self.stats.nb_query += 1
+            self.stats.nb_letter += len(word.letters)
+
             return self.knowledge_tree.get_output_word(word)
         except Exception:        
             self._logger.debug("Knowledge base has no previous knowledge for '{}'".format(word))
+
+            self.stats.nb_submited_query += 1
+            self.stats.nb_submited_letter += len(word.letters)
+
             output = self._execute_word(word)
+            
             if output is not None:
                 self.knowledge_tree.add_word(input_word = word, output_word = output)
             return output

@@ -73,13 +73,13 @@ class FakeActiveKnowledgeBase(ActiveKnowledgeBase):
     >>> w3 = Word([l_a, l_b, l_b, l_b, l_b, l_c, l_c, l_a])
     >>> o3 = OutputQuery(w3)    
     >>> kbase.resolve_query(o1)
-    >>> print o1.output_word
+    >>> print(o1.output_word)
     [Letter(1)]
     >>> kbase.resolve_query(o2)
-    >>> print o2.output_word
+    >>> print(o2.output_word)
     [Letter(2)]
     >>> kbase.resolve_query(o3)
-    >>> print o3.output_word
+    >>> print(o3.output_word)
     [Letter(1), Letter(2), Letter(2), Letter(2), Letter(2), Letter(3), Letter(3), Letter(1)]
 
     """

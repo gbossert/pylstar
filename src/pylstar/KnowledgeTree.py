@@ -24,13 +24,15 @@
 # +----------------------------------------------------------------------------
 # | Global Imports
 # +----------------------------------------------------------------------------
-
+import os
+import json
 
 # +----------------------------------------------------------------------------
 # | Pylstar Imports
 # +----------------------------------------------------------------------------
 from pylstar.tools.Decorators import PylstarLogger
 from pylstar.Word import Word
+from pylstar.Letter import Letter
 
 
 @PylstarLogger
@@ -39,18 +41,34 @@ class KnowledgeNode(object):
     def __init__(self, input_letter, output_letter):
         self.input_letter = input_letter
         self.output_letter = output_letter
-        self.children = []
+        self.children = dict()
 
     def __str__(self, level=0):
-        ret = "\t"*level+ str(self.input_letter)+" / "+str(self.output_letter)
+        return json.dumps(self.serialize(), sort_keys=True, indent=4, separators=(',', ': '))
 
-        ret += "\n"
-        for child in self.children:
-            ret += child.__str__(level+1)
-        return ret
+    def serialize(self):
+        """This method return a serialized representation of the node"""
+        node = {
+            "input_letter" : self.input_letter.serialize(),
+            "output_letter": self.output_letter.serialize(),
+            "children" : [c.serialize() for c in self.children.values()]
+        }
+        return node
+    
+    @staticmethod
+    def deserialize(dict_data, possible_letters):
+        if dict_data is None:
+            raise Exception("dict_data cannot be None")
+        input_letter = Letter.deserialize(dict_data['input_letter'], possible_letters)
+        output_letter = Letter.deserialize(dict_data['output_letter'], possible_letters)
+        node = KnowledgeNode(input_letter, output_letter)
+        for child in dict_data["children"]:
+            child_node = KnowledgeNode.deserialize(child, possible_letters)
+            node.children[child_node.input_letter] = child_node
+
+        return node
 
     def traverse(self, input_letters, output_letters = None):
-        self._logger.debug("Traversing children of '{}' with '{}'".format(self, ', '.join([str(l) for l in input_letters])))
 
         if input_letters[0] != self.input_letter:
             raise Exception("Node cannot be traversed with input letter '{}'".format(input_letters[0]))
@@ -68,22 +86,25 @@ class KnowledgeNode(object):
         if output_letters is not None:
             current_output_letter = output_letters[1]
 
-        for children in self.children:
-            if children.input_letter == current_input_letter:
+
+        if current_input_letter in self.children:
+            child = self.children[current_input_letter]
+            
+            if current_output_letter is not None and child.output_letter != current_output_letter:
+                raise Exception("Incompatible path found, expected '{}' found '{}'".format(child.output_letter.symbols, current_output_letter.symbols))
+
+            if output_letters is None:
                 new_output_letters = None
-                if current_output_letter is not None:
-                    if children.output_letter != current_output_letter:
-                        raise Exception("Incompatible path found, expected '{}' found '{}".format(children.output_letter.symbols, current_output_letter.symbols))
-                    new_output_letters = output_letters[1:]
+            else:
+                new_output_letters = output_letters[1:]
+                
+            new_input_letters = input_letters[1:]            
 
-                new_input_letters = input_letters[1:]
-
-                return [self.output_letter] + children.traverse(new_input_letters, output_letters = new_output_letters)
-
-        if output_letters is not None:
+            return [self.output_letter] + child.traverse(new_input_letters, output_letters = new_output_letters)
+        
+        elif output_letters is not None:
             new_children = KnowledgeNode(input_letter = input_letters[1], output_letter = output_letters[1])
-            self._logger.debug("Creating a '{}' as a child of '{}'".format(new_children, self))
-            self.children.append(new_children)
+            self.children[new_children.input_letter] = new_children
             new_input_letters = input_letters[1:]
             new_output_letters = output_letters[1:]
             return [self.output_letter] + new_children.traverse(new_input_letters, output_letters = new_output_letters)
@@ -128,13 +149,16 @@ class KnowledgeTree(object):
     ...
     Exception: No path found
     >>> tree.add_word(input_word, output_word)
-    >>> print tree.get_output_word(input_word)
+    >>> print(tree.get_output_word(input_word))
     [Letter(1), Letter(2)]
-
-
+    >>> eq_input_word = Word([Letter("a"), Letter("b")])
+    >>> print(tree.get_output_word(eq_input_word))
+    [Letter(1), Letter(2)]
     """
 
-    def __init__(self):
+    def __init__(self, cache_file_path = None):
+        self.__cache_file_path = cache_file_path
+        self.__nb_added_word = 0
         self.roots = []
 
     def __str__(self):
@@ -148,9 +172,11 @@ class KnowledgeTree(object):
 
         for root in self.roots:
             try:
-                return Word(root.traverse(input_word.letters))
-            except Exception, e:
-                self._logger.debug(e)
+                w = Word(root.traverse(input_word.letters))
+                self._logger.info("I = {} > O = {}".format(input_word, w))
+                return w
+            except Exception:
+                pass
 
         raise Exception("No path found")
 
@@ -182,10 +208,7 @@ class KnowledgeTree(object):
         >>> tree.add_word(input_word2, output_word3)
         Traceback (most recent call last):
         ...
-        Exception: Incompatible path found, expected 'set([2])' found 'set([1])
-
-
-
+        Exception: Incompatible path found, expected '{2}' found '{1}'
 
         """
 
@@ -198,6 +221,72 @@ class KnowledgeTree(object):
 
         self.__add_letters(input_word.letters, output_word.letters)
 
+        self.__nb_added_word += 1
+        if self.__cache_file_path is not None and self.__nb_added_word % 100 == 0:
+            self.write_cache()
+
+    def write_cache(self):
+        """This method writes the content of the knowledge tree to the self.cache_file_path.
+
+        >>> cache_file = "/tmp/test_ktree_cache.dump"
+        >>> from pylstar.KnowledgeTree import KnowledgeTree
+        >>> from pylstar.Word import Word
+        >>> from pylstar.Letter import Letter
+        >>> l_a = Letter("a")
+        >>> l_b = Letter("b")
+        >>> l_c = Letter("c")
+        >>> l_1 = Letter(1)
+        >>> l_2 = Letter(2)
+        >>> l_3 = Letter(3)
+        >>> tree = KnowledgeTree(cache_file_path = cache_file)
+        >>> input_word = Word([l_a, l_b])
+        >>> output_word = Word([l_1, l_2])
+        >>> tree.add_word(input_word, output_word)
+        >>> tree.write_cache()        
+        >>> input_word = Word([l_a, l_c])
+        >>> output_word = Word([l_1, l_3])
+        >>> tree.add_word(input_word, output_word)
+        >>> tree.write_cache()
+        >>> tree2 = KnowledgeTree(cache_file_path = cache_file)
+        >>> tree2.load_cache(possible_letters = [l_a, l_b, l_c, l_1, l_2, l_3])
+        >>> print(tree2.get_output_word(input_word))
+        [Letter(1), Letter(3)]
+        
+        """
+
+        if self.__cache_file_path is None:
+            raise Exception("Cache file path cannot be None")
+
+        self._logger.info("Writing the knowledge tree in cache '{}'".format(self.__cache_file_path))
+
+        if os.path.exists(self.__cache_file_path):
+            self._logger.info("Removing previous cache file '{}'".format(self.__cache_file_path))
+            os.remove(self.__cache_file_path)
+
+        nodes = [ root.serialize() for root in self.roots ]
+        with open(self.__cache_file_path, "w") as fd:
+            str_content = json.dumps(nodes, sort_keys=True, indent=4, separators=(',', ': '))
+            fd.write(str_content)
+
+    def load_cache(self, possible_letters):
+        """This method loads the content of the cache in the knowledge tree
+
+        See doctest declared in method "write_cache"
+    
+        """
+        if self.__cache_file_path is None:
+            raise Exception("Cache file path cannot be None")
+        self._logger.info("Loading cache from '{}'".format(self.__cache_file_path))
+
+        json_content = None
+
+        with open(self.__cache_file_path, "r") as fd:
+            json_content = json.loads(fd.read())
+
+        for content in json_content:
+            root = KnowledgeNode.deserialize(content, possible_letters)
+            self.roots.append(root)
+        
     def __add_letters(self, input_letters, output_letters):
         self._logger.debug("Adding letters '{}' / '{}'".format(', '.join([str(l) for l in input_letters]), ', '.join([str(l) for l in output_letters])))
 
@@ -206,7 +295,7 @@ class KnowledgeTree(object):
         for root in self.roots:
             if root.input_letter == input_letters[0]:
                 if root.output_letter != output_letters[0]:
-                    raise Exception("Incompatible path found, expected '{}' found '{}".format(root.output_letter, output_letters[0]))
+                    raise Exception("Incompatible path found, expected '{}' found '{}'".format(root.output_letter.symbols, output_letters[0].symbols))
                 retained_root = root
                 break
 

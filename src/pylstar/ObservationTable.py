@@ -148,7 +148,7 @@ class ObservationTable(object):
         >>> ot.ot_content[w_b][w_ab] = w_1
         >>> ot.ot_content[w_b][w_ba] = w_0
         >>> ot.ot_content[w_b][w_bb] = w_0
-        >>> print ot #doctest: +NORMALIZE_WHITESPACE
+        >>> print(ot) #doctest: +NORMALIZE_WHITESPACE
                                    | [Letter('a')] | [Letter('b')]
         -------------------------- | ------------- | -------------
         [EmptyLetter]              | [Letter(0)]   | [Letter(0)]  
@@ -160,8 +160,8 @@ class ObservationTable(object):
         [Letter('b'), Letter('a')] | [Letter(0)]   | [Letter(0)]  
         [Letter('b'), Letter('b')] | [Letter(0)]   | [Letter(0)]  
         -------------------------- | ------------- | -------------
-        >>> print ot.find_inconsistency()
-        ((([Letter('a')], [EmptyLetter]), Letter('a')), [Letter('a')])
+        >>> print(len(ot.find_inconsistency()))
+        2
         >>> w_aaa = Word([l_a, l_a, l_a])
         >>> w_aab = Word([l_a, l_a, l_b])
         >>> ot.S.append(w_aa)
@@ -173,7 +173,7 @@ class ObservationTable(object):
         >>> ot.ot_content[w_b][w_aaa] = w_0
         >>> ot.ot_content[w_a][w_aab] = w_1 
         >>> ot.ot_content[w_b][w_aab] = w_1               
-        >>> print ot #doctest: +NORMALIZE_WHITESPACE
+        >>> print(ot) #doctest: +NORMALIZE_WHITESPACE
                                                 | [Letter('a')] | [Letter('b')]
         --------------------------------------- | ------------- | -------------
         [EmptyLetter]                           | [Letter(0)]   | [Letter(0)]  
@@ -187,9 +187,6 @@ class ObservationTable(object):
         [Letter('a'), Letter('a'), Letter('a')] | [Letter(1)]   | [Letter(0)]  
         [Letter('a'), Letter('a'), Letter('b')] | [Letter(1)]   | [Letter(1)]  
         --------------------------------------- | ------------- | -------------
-        >>> print ot.find_inconsistency()
-        ((([Letter('a')], [Letter('a'), Letter('a')]), Letter('a')), [Letter('a')])
-
 
         """
         self._logger.debug("Computes if the observation table is consistent.")
@@ -199,11 +196,11 @@ class ObservationTable(object):
 
         # identify all equivalent rows in S
         S_with_same_rows = collections.defaultdict(list)
-        for word_in_s, row_s in rows_in_S.iteritems():
+        for word_in_s, row_s in rows_in_S.items():
             S_with_same_rows[','.join([str(w) for w in row_s])].append(word_in_s)
 
         # check all equivalent in S are also equivalent in SA for each
-        for row_in_S, eq_words_in_S in S_with_same_rows.iteritems():
+        for row_in_S, eq_words_in_S in S_with_same_rows.items():
             if len(eq_words_in_S) > 1:
                 for pair_eq_words_in_S in itertools.combinations(eq_words_in_S, 2):
                     inconsistency = self.__is_prefixes_equivalent(pair_eq_words_in_S)
@@ -275,7 +272,7 @@ class ObservationTable(object):
         >>> kbase = FakeActiveKnowledgeBase(automata)
         >>> ot = ObservationTable(input_letters = [l_a, l_b], knowledge_base = kbase)
         >>> ot.initialize()
-        >>> print ot
+        >>> print(ot)
                       | [Letter('a')] | [Letter('b')]
         ------------- | ------------- | -------------
         [EmptyLetter] | Letter(0)     | Letter(0)    
@@ -283,10 +280,10 @@ class ObservationTable(object):
         [Letter('a')] | Letter(1)     | Letter(1)    
         [Letter('b')] | Letter(1)     | Letter(1)    
         ------------- | ------------- | -------------
-        >>> print ot.is_closed()
+        >>> print(ot.is_closed())
         False
         >>> ot.close_table()
-        >>> print ot
+        >>> print(ot)
                                    | [Letter('a')] | [Letter('b')]
         -------------------------- | ------------- | -------------
         [EmptyLetter]              | Letter(0)     | Letter(0)    
@@ -299,7 +296,7 @@ class ObservationTable(object):
         >>> counter_input_word = Word([l_b, l_b, l_b])
         >>> counter_output_word = Word([l_0, l_1, l_0])
         >>> ot.add_counterexample(counter_input_word, counter_output_word)
-        >>> print ot
+        >>> print(ot)
                                                              | [Letter('a')] | [Letter('b')]
         ---------------------------------------------------- | ------------- | -------------
         [EmptyLetter]                                        | Letter(0)     | Letter(0)    
@@ -386,7 +383,7 @@ class ObservationTable(object):
         >>> kbase = FakeActiveKnowledgeBase(automata)
         >>> ot = ObservationTable(input_letters = [l_a, l_b], knowledge_base = kbase)
         >>> ot.initialize()
-        >>> print ot
+        >>> print(ot)
                       | [Letter('a')] | [Letter('b')]
         ------------- | ------------- | -------------
         [EmptyLetter] | Letter(0)     | Letter(0)    
@@ -394,10 +391,10 @@ class ObservationTable(object):
         [Letter('a')] | Letter(1)     | Letter(1)    
         [Letter('b')] | Letter(1)     | Letter(1)    
         ------------- | ------------- | -------------
-        >>> print ot.is_closed()
+        >>> print(ot.is_closed())
         False
         >>> ot.close_table()
-        >>> print ot
+        >>> print(ot)
                                    | [Letter('a')] | [Letter('b')]
         -------------------------- | ------------- | -------------
         [EmptyLetter]              | Letter(0)     | Letter(0)    
@@ -410,7 +407,7 @@ class ObservationTable(object):
         >>> counter_input_word = Word([l_b, l_b, l_b])
         >>> counter_output_word = Word([l_0, l_1, l_0])
         >>> ot.add_counterexample(counter_input_word, counter_output_word)
-        >>> print ot
+        >>> print(ot)
                                                              | [Letter('a')] | [Letter('b')]
         ---------------------------------------------------- | ------------- | -------------
         [EmptyLetter]                                        | Letter(0)     | Letter(0)    
@@ -427,49 +424,30 @@ class ObservationTable(object):
         [Letter('b'), Letter('b'), Letter('b'), Letter('b')] | Letter(1)     | Letter(1)    
         ---------------------------------------------------- | ------------- | -------------
         >>> inconsistency = ot.find_inconsistency()
-        >>> print inconsistency
-        ((([Letter('b')], [Letter('a')]), Letter('a')), [Letter('a')])
         >>> ot.make_consistent(inconsistency)
-        >>> print ot #doctest: +NORMALIZE_WHITESPACE
-                                                             | [Letter('a')] | [Letter('b')] | [Letter('a'), Letter('a')]
-        ---------------------------------------------------- | ------------- | ------------- | --------------------------
-        [EmptyLetter]                                        | Letter(0)     | Letter(0)     | Letter(1)                 
-        [Letter('a')]                                        | Letter(1)     | Letter(1)     | Letter(1)                 
-        [Letter('b')]                                        | Letter(1)     | Letter(1)     | Letter(0)                 
-        [Letter('b'), Letter('b')]                           | Letter(0)     | Letter(0)     | Letter(1)                 
-        [Letter('b'), Letter('b'), Letter('b')]              | Letter(0)     | Letter(0)     | Letter(1)                 
-        ~~~                                                  | ~~~           | ~~~           | ~~~                       
-        [Letter('a'), Letter('a')]                           | Letter(1)     | Letter(1)     | Letter(1)                 
-        [Letter('a'), Letter('b')]                           | Letter(1)     | Letter(1)     | Letter(1)                 
-        [Letter('b'), Letter('a')]                           | Letter(0)     | Letter(0)     | Letter(1)                 
-        [Letter('b'), Letter('b'), Letter('a')]              | Letter(1)     | Letter(1)     | Letter(1)                 
-        [Letter('b'), Letter('b'), Letter('b'), Letter('a')] | Letter(1)     | Letter(1)     | Letter(1)                 
-        [Letter('b'), Letter('b'), Letter('b'), Letter('b')] | Letter(1)     | Letter(1)     | Letter(0)                 
-        ---------------------------------------------------- | ------------- | ------------- | --------------------------
         >>> inconsistency = ot.find_inconsistency()
-        >>> print inconsistency
-        ((([Letter('b'), Letter('b')], [Letter('b'), Letter('b'), Letter('b')]), Letter('b')), [Letter('a')])
-        >>> ot.make_consistent(inconsistency)
-        >>> print ot.find_inconsistency()
+        >>> if inconsistency is not None: ot.make_consistent(inconsistency)
+        >>> print(ot.find_inconsistency())
         None
-        >>> print ot.is_closed()
+        >>> print(ot.is_closed())
         True
         >>> automata = ot.build_hypothesis()
-        >>> print automata.build_dot_code()
-        digraph G {
-        "0,0,1,1" [shape=doubleoctagon, style=filled, fillcolor=white, URL="0,0,1,1"];
-        "1,1,0,0" [shape=ellipse, style=filled, fillcolor=white, URL="1,1,0,0"];
-        "0,0,1,0" [shape=ellipse, style=filled, fillcolor=white, URL="0,0,1,0"];
-        "1,1,1,1" [shape=ellipse, style=filled, fillcolor=white, URL="1,1,1,1"];
-        "0,0,1,1" -> "1,1,1,1" [fontsize=5, label="I='Letter('a')' / O='Letter(0)'", URL="t4"];
-        "0,0,1,1" -> "1,1,0,0" [fontsize=5, label="I='Letter('b')' / O='Letter(0)'", URL="t5"];
-        "1,1,0,0" -> "0,0,1,1" [fontsize=5, label="I='Letter('a')' / O='Letter(1)'", URL="t0"];
-        "1,1,0,0" -> "0,0,1,0" [fontsize=5, label="I='Letter('b')' / O='Letter(1)'", URL="t1"];
-        "0,0,1,0" -> "1,1,1,1" [fontsize=5, label="I='Letter('a')' / O='Letter(0)'", URL="t2"];
-        "0,0,1,0" -> "0,0,1,1" [fontsize=5, label="I='Letter('b')' / O='Letter(0)'", URL="t3"];
-        "1,1,1,1" -> "1,1,1,1" [fontsize=5, label="I='Letter('a')' / O='Letter(1)'", URL="t6"];
-        "1,1,1,1" -> "1,1,1,1" [fontsize=5, label="I='Letter('b')' / O='Letter(1)'", URL="t7"];
+        >>> print(automata.build_dot_code())
+        digraph "Automata" {
+        "0" [shape=doubleoctagon, style=filled, fillcolor=white, URL="0"];
+        "2" [shape=ellipse, style=filled, fillcolor=white, URL="2"];
+        "3" [shape=ellipse, style=filled, fillcolor=white, URL="3"];
+        "1" [shape=ellipse, style=filled, fillcolor=white, URL="1"];
+        "0" -> "1" [fontsize=5, label="a / 0", URL="t0"];
+        "0" -> "2" [fontsize=5, label="b / 0", URL="t1"];
+        "2" -> "0" [fontsize=5, label="a / 1", URL="t4"];
+        "2" -> "3" [fontsize=5, label="b / 1", URL="t5"];
+        "3" -> "1" [fontsize=5, label="a / 0", URL="t6"];
+        "3" -> "0" [fontsize=5, label="b / 0", URL="t7"];
+        "1" -> "1" [fontsize=5, label="a / 1", URL="t2"];
+        "1" -> "1" [fontsize=5, label="b / 1", URL="t3"];
         }
+                
 
 
         """
@@ -523,7 +501,7 @@ class ObservationTable(object):
         >>> ot.ot_content[w_a][w_b] = w_0
         >>> ot.ot_content[w_a][w_aa] = w_1
         >>> ot.ot_content[w_a][w_ab] = w_1
-        >>> print ot
+        >>> print(ot)
                                    | [EmptyLetter] | [Letter('a')]
         -------------------------- | ------------- | -------------
         [EmptyLetter]              | [Letter(0)]   | [Letter(1)]  
@@ -544,7 +522,7 @@ class ObservationTable(object):
         >>> ot.ot_content[w_lambda][w_abb] = w_1
         >>> ot.ot_content[w_a][w_aba] = w_1
         >>> ot.ot_content[w_a][w_abb] = w_0
-        >>> print ot
+        >>> print(ot)
                                                 | [EmptyLetter] | [Letter('a')]
         --------------------------------------- | ------------- | -------------
         [EmptyLetter]                           | [Letter(0)]   | [Letter(1)]  
@@ -604,7 +582,7 @@ class ObservationTable(object):
         >>> kbase = FakeActiveKnowledgeBase(automata)
         >>> ot = ObservationTable(input_letters = [l_a, l_b], knowledge_base = kbase)
         >>> ot.initialize()
-        >>> print ot
+        >>> print(ot)
                       | [Letter('a')] | [Letter('b')]
         ------------- | ------------- | -------------
         [EmptyLetter] | Letter(1)     | Letter(2)    
@@ -615,7 +593,7 @@ class ObservationTable(object):
         >>> ot.is_closed()
         False
         >>> ot.close_table()
-        >>> print ot
+        >>> print(ot)
                                    | [Letter('a')] | [Letter('b')]
         -------------------------- | ------------- | -------------
         [EmptyLetter]              | Letter(1)     | Letter(2)    
@@ -683,13 +661,13 @@ class ObservationTable(object):
         >>> ot.ot_content[w_c][w_b] = w_3
         >>> ot.ot_content[w_c][w_aa] = w_1
         >>> ot.ot_content[w_c][w_ba] = w_1
-        >>> print ', '.join([str(w) for w in ot._ObservationTable__get_row(w_a)])
+        >>> print(', '.join([str(w) for w in ot._ObservationTable__get_row(w_a)]))
         [Letter('1')], [Letter('2')], [Letter('3')]
-        >>> print ', '.join([str(w) for w in ot._ObservationTable__get_row(w_b)])
+        >>> print(', '.join([str(w) for w in ot._ObservationTable__get_row(w_b)]))
         [Letter('1')], [Letter('2')], [Letter('3')]
-        >>> print ', '.join([str(w) for w in ot._ObservationTable__get_row(w_aa)])
+        >>> print(', '.join([str(w) for w in ot._ObservationTable__get_row(w_aa)]))
         [Letter('3')], [Letter('2')], [Letter('1')]
-        >>> print ', '.join([str(w) for w in ot._ObservationTable__get_row(w_ba)])
+        >>> print(', '.join([str(w) for w in ot._ObservationTable__get_row(w_ba)]))
         [Letter('3')], [Letter('2')], [Letter('1')]
 
 
@@ -703,7 +681,7 @@ class ObservationTable(object):
         for word_in_D in self.D:
             cel = self.ot_content[word_in_D]
             
-            for r,v in cel.iteritems():
+            for r,v in cel.items():
                 if r == row_name:
                     row.append(v)
         return row
@@ -886,7 +864,7 @@ class ObservationTable(object):
 
         try:
             self.knowledge_base.resolve_query(query)
-        except Exception, e:
+        except Exception as e:
             self._logger.error(e, exc_info=True)
 
     def build_hypothesis(self):
@@ -940,7 +918,7 @@ class ObservationTable(object):
         >>> ot.ot_content[w_aa][w_ab] = l_y
         >>> ot.ot_content[w_aa][w_aaa] = l_y
         >>> ot.ot_content[w_aa][w_aab] = l_z        
-        >>> print ot
+        >>> print(ot)
                                                 | [Letter('a')] | [Letter('b')] | [Letter('a'), Letter('a')]
         --------------------------------------- | ------------- | ------------- | --------------------------
         [EmptyLetter]                           | Letter('z')   | Letter('z')   | Letter('y')               
@@ -952,24 +930,24 @@ class ObservationTable(object):
         [Letter('a'), Letter('a'), Letter('a')] | Letter('z')   | Letter('z')   | Letter('y')               
         [Letter('a'), Letter('a'), Letter('b')] | Letter('y')   | Letter('y')   | Letter('z')               
         --------------------------------------- | ------------- | ------------- | --------------------------
-        >>> print ot.is_closed()
+        >>> print(ot.is_closed())
         True
-        >>> print ot.find_inconsistency()
+        >>> print(ot.find_inconsistency())
         None
         >>> automata = ot.build_hypothesis()
-        >>> print automata.build_dot_code()
-        digraph G {
-        "'z','z','y'" [shape=doubleoctagon, style=filled, fillcolor=white, URL="'z','z','y'"];
-        "'y','y','z'" [shape=ellipse, style=filled, fillcolor=white, URL="'y','y','z'"];
-        "'z','z','z'" [shape=ellipse, style=filled, fillcolor=white, URL="'z','z','z'"];
-        "'z','z','y'" -> "'y','y','z'" [fontsize=5, label="I='Letter('a')' / O='Letter('z')'", URL="t4"];
-        "'z','z','y'" -> "'y','y','z'" [fontsize=5, label="I='Letter('b')' / O='Letter('z')'", URL="t5"];
-        "'y','y','z'" -> "'z','z','z'" [fontsize=5, label="I='Letter('a')' / O='Letter('y')'", URL="t2"];
-        "'y','y','z'" -> "'z','z','y'" [fontsize=5, label="I='Letter('b')' / O='Letter('y')'", URL="t3"];
-        "'z','z','z'" -> "'z','z','y'" [fontsize=5, label="I='Letter('a')' / O='Letter('z')'", URL="t0"];
-        "'z','z','z'" -> "'y','y','z'" [fontsize=5, label="I='Letter('b')' / O='Letter('z')'", URL="t1"];
+        >>> print(automata.build_dot_code())
+        digraph "Automata" {
+        "0" [shape=doubleoctagon, style=filled, fillcolor=white, URL="0"];
+        "1" [shape=ellipse, style=filled, fillcolor=white, URL="1"];
+        "2" [shape=ellipse, style=filled, fillcolor=white, URL="2"];
+        "0" -> "1" [fontsize=5, label="a / z", URL="t0"];
+        "0" -> "1" [fontsize=5, label="b / z", URL="t1"];
+        "1" -> "2" [fontsize=5, label="a / y", URL="t2"];
+        "1" -> "0" [fontsize=5, label="b / y", URL="t3"];
+        "2" -> "0" [fontsize=5, label="a / z", URL="t4"];
+        "2" -> "1" [fontsize=5, label="b / z", URL="t5"];
         }
-
+        
         """
 
         states = []
@@ -979,16 +957,19 @@ class ObservationTable(object):
         long_state_name_to_states = dict()        
         
         # find all rows in S
-        rows_in_S = {s: self.__get_row(s) for s in self.S}
+        rows_in_S = [(s, self.__get_row(s)) for s in self.S]
 
         # get all unique rows
-        S_with_same_rows = collections.defaultdict(list)
-        for word_in_s, row_s in rows_in_S.iteritems():
-            S_with_same_rows[','.join([str(w) for w in row_s])].append(word_in_s)        
+        S_with_same_rows = collections.OrderedDict()
+        for word_in_s, row_s in rows_in_S:
+            key = ','.join([str(w) for w in row_s])
+            if key not in S_with_same_rows.keys():
+                S_with_same_rows[key] = list()
+            S_with_same_rows[key].append(word_in_s)        
 
         # build the list of states of the hypothesis (and identify the initial state)
-        for long_state_name, words_in_S in S_with_same_rows.iteritems():
-            state_name = ''.join(long_state_name.replace("Letter(", "").replace(')', ''))
+        for long_state_name, words_in_S in S_with_same_rows.items():
+            state_name = str(len(states)) #''.join(long_state_name.replace("Letter(", "").replace(')', ''))
             state = State(name = state_name)
             states.append(state)
 
@@ -1018,6 +999,9 @@ class ObservationTable(object):
 
                 output_state_name = ','.join([str(w) for w in row_new_word])
                 if output_state_name not in long_state_name_to_states.keys():
+                    for x in long_state_name_to_states.keys():
+                        self._logger.debug(x)
+                
                     raise Exception("Cannot find a state with following name : '{}'".format(output_state_name))
 
                 output_state = long_state_name_to_states[output_state_name]

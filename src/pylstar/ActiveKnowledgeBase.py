@@ -41,8 +41,8 @@ class ActiveKnowledgeBase(KnowledgeBase):
 
     """
 
-    def __init__(self):
-        super(ActiveKnowledgeBase, self).__init__()
+    def __init__(self, cache_file_path = None):
+        super(ActiveKnowledgeBase, self).__init__(cache_file_path = cache_file_path)
 
     def _execute_word(self, word):
         """Executes the specified word."""

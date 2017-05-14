@@ -41,7 +41,7 @@ class Word(object):
     >>> l1 = Letter("a")
     >>> l2 = Letter("b")
     >>> w1 = Word([l1, l2])
-    >>> print w1
+    >>> print(w1)
     [Letter('a'), Letter('b')]
 
     
@@ -91,7 +91,7 @@ class Word(object):
         >>> w1 = Word([l1, l2])
         >>> w2 = Word([l3, l4])
         >>> w3 = w1 + w2
-        >>> print w3
+        >>> print(w3)
         [Letter('a'), Letter('b'), Letter('c'), Letter('d')]
 
 

@@ -31,7 +31,6 @@
 # +----------------------------------------------------------------------------
 from pylstar.tools.Decorators import PylstarLogger
 
-
 @PylstarLogger
 class Letter(object):
     """
@@ -40,7 +39,7 @@ class Letter(object):
 
     >>> from pylstar.Letter import Letter
     >>> l1 = Letter("l1")
-    >>> print l1
+    >>> print(l1)
     Letter('l1')
     
     """
@@ -52,7 +51,9 @@ class Letter(object):
             self.symbols.add(symbol)
         if symbols is not None:
             self.symbols.update(symbols)
-            
+
+    def __hash__(self):
+        return hash(frozenset(self.symbols))
 
     def __eq__(self, other):
         """Two letters are equal iif their symbols are equals
@@ -69,6 +70,7 @@ class Letter(object):
         """
         if not isinstance(other, Letter):
             return False
+        
         return self.symbols == other.symbols
 
     def __ne__(self, other):
@@ -90,14 +92,45 @@ class Letter(object):
         return self.symbols != other.symbols
     
     def __str__(self):
+        return "Letter({})".format(self.name)
+
+    @property
+    def name(self):                
         str_name = "None"
         if self.symbols is not None:
             str_name = ','.join([repr(s) for s in self.symbols])
-        
-        return "Letter({})".format(str_name)
+        return str_name
 
     def __repr__(self):
         return self.__str__()
+
+    def serialize(self):
+        return self.name
+
+    @staticmethod
+    def deserialize(str_letters, possible_letters):
+        letters = []
+        for str_letter in str_letters.split(','):
+            found = False
+            for possible_letter in possible_letters:
+                if possible_letter.name == str_letter:
+                    letters.append(possible_letter)
+                    found = True
+                    break
+            if not found:
+                raise Exception("Cannot find any letter that fit with '{}'".format(str_letter))
+        if len(letters) == 1:
+            return letters[0]
+        else:
+            symbols = []
+            for l in letters:
+                symbols.extend(l.symbols)
+            return Letter(symbols=symbols)
+
+        
+        
+                
+
 
     @property
     def symbols(self):

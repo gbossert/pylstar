@@ -39,6 +39,7 @@ from pylstar import KnowledgeTree
 from pylstar import ActiveKnowledgeBase
 from pylstar import FakeActiveKnowledgeBase
 from pylstar.automata import Automata
+from pylstar.automata import DOTParser
 from pylstar import Letter
 from pylstar.eqtests import RandomWalkMethod
 from pylstar.automata import State
@@ -58,8 +59,8 @@ def getSuite():
         Automata,
         Letter,
         RandomWalkMethod,
-        State
-        
+        State,
+        DOTParser
     ]
 
     suite = unittest.TestSuite()

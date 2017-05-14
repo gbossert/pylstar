@@ -65,7 +65,7 @@ class OutputQuery(object):
         >>> output_query = OutputQuery(w1)
         >>> output_query.is_queried()
         False
-        >>> print output_query
+        >>> print(output_query)
         OutputQuery(I = [Letter('a')], O = None)
 
         """

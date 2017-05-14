@@ -37,13 +37,13 @@ appname = name
 #|    the version number must be changed during the last commit before
 #|    the tag release.
 #+---------------------------------------------------------------------------+
-version = "0.1.dev1"
+version = "0.1"
 versionName = "Unknown"
 
 #+---------------------------------------------------------------------------+
 #| Copyright mentions
 #+---------------------------------------------------------------------------+
-copyright = "Copyright (C) 2015 Georges Bossert"
+copyright = "Copyright (C) 2015-2017 Georges Bossert"
 
 #+---------------------------------------------------------------------------+
 #| Description of the application

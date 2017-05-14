@@ -81,20 +81,20 @@ class RandomWalkMethod(object):
     >>> eqTests = RandomWalkMethod(kbase, input_letters, 10000, 0.75)
     >>> lstar = LSTAR(input_vocabulary, kbase, max_states = 5, eqtests=eqTests)
     >>> infered_automata = lstar.learn()
-    >>> print infered_automata.build_dot_code()
-    digraph G {
-    "1,2,3,2" [shape=doubleoctagon, style=filled, fillcolor=white, URL="1,2,3,2"];
-    "2,3,1,2" [shape=ellipse, style=filled, fillcolor=white, URL="2,3,1,2"];
-    "2,3,1,1" [shape=ellipse, style=filled, fillcolor=white, URL="2,3,1,1"];
-    "1,2,3,2" -> "1,2,3,2" [fontsize=5, label="I='Letter('a')' / O='Letter(1)'", URL="t0"];
-    "1,2,3,2" -> "2,3,1,1" [fontsize=5, label="I='Letter('b')' / O='Letter(2)'", URL="t1"];
-    "1,2,3,2" -> "2,3,1,2" [fontsize=5, label="I='Letter('c')' / O='Letter(3)'", URL="t2"];
-    "2,3,1,2" -> "2,3,1,2" [fontsize=5, label="I='Letter('a')' / O='Letter(2)'", URL="t6"];
-    "2,3,1,2" -> "2,3,1,2" [fontsize=5, label="I='Letter('b')' / O='Letter(3)'", URL="t7"];
-    "2,3,1,2" -> "2,3,1,1" [fontsize=5, label="I='Letter('c')' / O='Letter(1)'", URL="t8"];
-    "2,3,1,1" -> "2,3,1,1" [fontsize=5, label="I='Letter('a')' / O='Letter(2)'", URL="t3"];
-    "2,3,1,1" -> "2,3,1,1" [fontsize=5, label="I='Letter('b')' / O='Letter(3)'", URL="t4"];
-    "2,3,1,1" -> "1,2,3,2" [fontsize=5, label="I='Letter('c')' / O='Letter(1)'", URL="t5"];
+    >>> print(infered_automata.build_dot_code())
+    digraph "Automata" {
+    "0" [shape=doubleoctagon, style=filled, fillcolor=white, URL="0"];
+    "2" [shape=ellipse, style=filled, fillcolor=white, URL="2"];
+    "1" [shape=ellipse, style=filled, fillcolor=white, URL="1"];
+    "0" -> "0" [fontsize=5, label="a / 1", URL="t0"];
+    "0" -> "1" [fontsize=5, label="b / 2", URL="t1"];
+    "0" -> "2" [fontsize=5, label="c / 3", URL="t2"];
+    "2" -> "2" [fontsize=5, label="a / 2", URL="t6"];
+    "2" -> "2" [fontsize=5, label="b / 3", URL="t7"];
+    "2" -> "1" [fontsize=5, label="c / 1", URL="t8"];
+    "1" -> "1" [fontsize=5, label="a / 2", URL="t3"];
+    "1" -> "1" [fontsize=5, label="b / 3", URL="t4"];
+    "1" -> "0" [fontsize=5, label="c / 1", URL="t5"];
     }
 
     
@@ -159,32 +159,30 @@ class RandomWalkMethod(object):
     >>> eqTests = RandomWalkMethod(kbase, input_letters, 10000, 0.75)
     >>> lstar = LSTAR(input_vocabulary, kbase, max_states = 5, eqtests=eqTests)
     >>> infered_automata = lstar.learn()
-    >>> print infered_automata.build_dot_code()
-    digraph G {
-    "'pass?','ack','error','error','error','error'" [shape=doubleoctagon, style=filled, fillcolor=white, URL="'pass?','ack','error','error','error','error'"];
-    "'error','ack','welcome','error','error','error'" [shape=ellipse, style=filled, fillcolor=white, URL="'error','ack','welcome','error','error','error'"];
-    "'error','ack','error','error','ack','ack'" [shape=ellipse, style=filled, fillcolor=white, URL="'error','ack','error','error','ack','ack'"];
-    "'pass?','ack','error','error','error','error'" -> "'error','ack','welcome','error','error','error'" [fontsize=5, label="I='Letter('hello')' / O='Letter('pass?')'", URL="t0"];
-    "'pass?','ack','error','error','error','error'" -> "'pass?','ack','error','error','error','error'" [fontsize=5, label="I='Letter('bye')' / O='Letter('ack')'", URL="t1"];
-    "'pass?','ack','error','error','error','error'" -> "'pass?','ack','error','error','error','error'" [fontsize=5, label="I='Letter('pass valid')' / O='Letter('error')'", URL="t2"];
-    "'pass?','ack','error','error','error','error'" -> "'pass?','ack','error','error','error','error'" [fontsize=5, label="I='Letter('pass invalid')' / O='Letter('error')'", URL="t3"];
-    "'pass?','ack','error','error','error','error'" -> "'pass?','ack','error','error','error','error'" [fontsize=5, label="I='Letter('cmd1')' / O='Letter('error')'", URL="t4"];
-    "'pass?','ack','error','error','error','error'" -> "'pass?','ack','error','error','error','error'" [fontsize=5, label="I='Letter('cmd2')' / O='Letter('error')'", URL="t5"];
-    "'error','ack','welcome','error','error','error'" -> "'error','ack','welcome','error','error','error'" [fontsize=5, label="I='Letter('hello')' / O='Letter('error')'", URL="t6"];
-    "'error','ack','welcome','error','error','error'" -> "'pass?','ack','error','error','error','error'" [fontsize=5, label="I='Letter('bye')' / O='Letter('ack')'", URL="t7"];
-    "'error','ack','welcome','error','error','error'" -> "'error','ack','error','error','ack','ack'" [fontsize=5, label="I='Letter('pass valid')' / O='Letter('welcome')'", URL="t8"];
-    "'error','ack','welcome','error','error','error'" -> "'error','ack','welcome','error','error','error'" [fontsize=5, label="I='Letter('pass invalid')' / O='Letter('error')'", URL="t9"];
-    "'error','ack','welcome','error','error','error'" -> "'error','ack','welcome','error','error','error'" [fontsize=5, label="I='Letter('cmd1')' / O='Letter('error')'", URL="t10"];
-    "'error','ack','welcome','error','error','error'" -> "'error','ack','welcome','error','error','error'" [fontsize=5, label="I='Letter('cmd2')' / O='Letter('error')'", URL="t11"];
-    "'error','ack','error','error','ack','ack'" -> "'error','ack','error','error','ack','ack'" [fontsize=5, label="I='Letter('hello')' / O='Letter('error')'", URL="t12"];
-    "'error','ack','error','error','ack','ack'" -> "'pass?','ack','error','error','error','error'" [fontsize=5, label="I='Letter('bye')' / O='Letter('ack')'", URL="t13"];
-    "'error','ack','error','error','ack','ack'" -> "'error','ack','error','error','ack','ack'" [fontsize=5, label="I='Letter('pass valid')' / O='Letter('error')'", URL="t14"];
-    "'error','ack','error','error','ack','ack'" -> "'error','ack','error','error','ack','ack'" [fontsize=5, label="I='Letter('pass invalid')' / O='Letter('error')'", URL="t15"];
-    "'error','ack','error','error','ack','ack'" -> "'error','ack','error','error','ack','ack'" [fontsize=5, label="I='Letter('cmd1')' / O='Letter('ack')'", URL="t16"];
-    "'error','ack','error','error','ack','ack'" -> "'error','ack','error','error','ack','ack'" [fontsize=5, label="I='Letter('cmd2')' / O='Letter('ack')'", URL="t17"];
+    >>> print(infered_automata.build_dot_code())
+    digraph "Automata" {
+    "0" [shape=doubleoctagon, style=filled, fillcolor=white, URL="0"];
+    "1" [shape=ellipse, style=filled, fillcolor=white, URL="1"];
+    "2" [shape=ellipse, style=filled, fillcolor=white, URL="2"];
+    "0" -> "1" [fontsize=5, label="hello / pass?", URL="t0"];
+    "0" -> "0" [fontsize=5, label="bye / ack", URL="t1"];
+    "0" -> "0" [fontsize=5, label="pass valid / error", URL="t2"];
+    "0" -> "0" [fontsize=5, label="pass invalid / error", URL="t3"];
+    "0" -> "0" [fontsize=5, label="cmd1 / error", URL="t4"];
+    "0" -> "0" [fontsize=5, label="cmd2 / error", URL="t5"];
+    "1" -> "1" [fontsize=5, label="hello / error", URL="t6"];
+    "1" -> "0" [fontsize=5, label="bye / ack", URL="t7"];
+    "1" -> "2" [fontsize=5, label="pass valid / welcome", URL="t8"];
+    "1" -> "1" [fontsize=5, label="pass invalid / error", URL="t9"];
+    "1" -> "1" [fontsize=5, label="cmd1 / error", URL="t10"];
+    "1" -> "1" [fontsize=5, label="cmd2 / error", URL="t11"];
+    "2" -> "2" [fontsize=5, label="hello / error", URL="t12"];
+    "2" -> "0" [fontsize=5, label="bye / ack", URL="t13"];
+    "2" -> "2" [fontsize=5, label="pass valid / error", URL="t14"];
+    "2" -> "2" [fontsize=5, label="pass invalid / error", URL="t15"];
+    "2" -> "2" [fontsize=5, label="cmd1 / ack", URL="t16"];
+    "2" -> "2" [fontsize=5, label="cmd2 / ack", URL="t17"];
     }
-
-
 
 
 
@@ -235,7 +233,7 @@ class RandomWalkMethod(object):
                 input_word.letters.append(input_letter)
                 hypothesis_output_word.letters.append(output_letter)
                 
-            except Exception, e:
+            except Exception as e:
                 self._logger.warn(e)
                 force_restart = True
 
