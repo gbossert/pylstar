@@ -51,8 +51,8 @@ dependency_links = []
 data_files = []
 
 # Extract the long description from README.rst and NEWS.rst files
-README = open('README.md', 'rt').read()
-NEWS = open('CHANGELOG.md', 'rt').read()
+README = open('README.rst', 'rt').read()
+NEWS = open('CHANGELOG.rst', 'rt').read()
 
 # +----------------------------------------------------------------------------
 # | Extensions in the build operations (test, ...)
