@@ -1,0 +1,8 @@
+include CHANGELOG.rst
+include COPYING.txt
+include README.rst
+include PKG-INFO.txt
+include README.rst
+include requirements.txt
+recursive-include resources *
+recursive-exclude * *~ *.orig *.bak *.tmp *.pyc *.log
