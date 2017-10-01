@@ -45,8 +45,8 @@ class Transition(object):
 
     @property
     def label(self):
-        input_symbols = ",".join([str(symbol) for symbol in self.input_letter.symbols])
-        output_symbols = ",".join([str(symbol) for symbol in self.output_letter.symbols])        
+        input_symbols = ",".join([str(symbol.name) for symbol in self.input_letter.symbols])
+        output_symbols = ",".join([str(symbol.name) for symbol in self.output_letter.symbols])        
         
         return "{} / {}".format(input_symbols, output_symbols)
 
