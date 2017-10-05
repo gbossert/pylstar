@@ -67,7 +67,7 @@ setup(
     name=release.name,
     packages=find_packages(where='src'),
     package_dir={
-        "pylstar": opj("src", "pylstar")
+        "": "src"
     },
     data_files=data_files,
     install_requires=dependencies,
