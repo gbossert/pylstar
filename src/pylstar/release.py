@@ -37,7 +37,7 @@ appname = name
 #|    the version number must be changed during the last commit before
 #|    the tag release.
 #+---------------------------------------------------------------------------+
-version = "0.1.1"
+version = "0.1.2"
 versionName = "Unknown"
 
 #+---------------------------------------------------------------------------+
