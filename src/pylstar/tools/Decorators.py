@@ -25,7 +25,6 @@
 #| Standard library imports                                                  |
 #+---------------------------------------------------------------------------+
 import logging
-logging.basicConfig(level=logging.DEBUG)
 
 #+---------------------------------------------------------------------------+
 #| Related third party imports                                               |
