@@ -73,7 +73,7 @@ class NetworkActiveKnowledgeBase(ActiveKnowledgeBase):
         try:
             to_send = ''.join([symbol for symbol in letter.symbols])
             output_letter = Letter(self._send_and_receive(s, to_send))
-        except Exception, e:
+        except Exception as e:
             self._logger.error(e)
 
         return output_letter
