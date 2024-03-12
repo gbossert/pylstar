@@ -42,6 +42,8 @@ from pylstar.automata import Automata
 from pylstar.automata import DOTParser
 from pylstar import Letter
 from pylstar.eqtests import RandomWalkMethod
+from pylstar.eqtests import BDistMethod
+from pylstar.eqtests import MultipleEqtests
 from pylstar.automata import State
 
 
@@ -59,6 +61,8 @@ def getSuite():
         Automata,
         Letter,
         RandomWalkMethod,
+        BDistMethod,
+        MultipleEqtests,
         State,
         DOTParser
     ]
